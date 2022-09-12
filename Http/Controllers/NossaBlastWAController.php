@@ -40,7 +40,7 @@ class NossaBlastWAController extends Controller
         $Dictionary = new DictionaryController;
         $sendTarget = $Dictionary->retrieveValue('NossaBlastWA', 'Phone Number', $searchParams);
         $campaignBlast = $Dictionary->retrieveExtra('NossaBlastWA', 'Campaign Blast', $payload->campaign);
-        if (!is_null($campaignBlast) && property_exists($campaignBlast, 'send_api_id')) {
+        if (is_null($campaignBlast) && !property_exists($campaignBlast, 'send_api_id')) {
             Log::error('No Send API ID Found for campaign ' . $payload->campaign);
             return false;
         }
