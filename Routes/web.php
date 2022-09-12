@@ -11,6 +11,10 @@
 |
 */
 
-Route::prefix('nossablastwa')->group(function() {
-    Route::get('/', 'NossaBlastWAController@index');
+Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'nossablastwa'], function () {
+    Route::post('/listDataContact', 'NossaBlastWAController@listDataContact');
+    Route::get('/listDataCampaign', 'NossaBlastWAController@listDataCampaign');
+    Route::get('/AdminContact', 'NossaBlastWAController@AdminContact')->name('AdminContact');
+    Route::post('/updateCampaign', 'NossaBlastWAController@updateCampaign');
+    Route::post('/addContact', 'NossaBlastWAController@addContact');
 });

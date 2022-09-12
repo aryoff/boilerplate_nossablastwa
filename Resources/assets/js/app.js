@@ -4,19 +4,19 @@ $.ajaxSetup({
         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
     }
 });
+let cacheWitel=['Telkom ACEH','Telkom BABEL','Telkom BALIKPAPAN','Telkom BANDUNG','Telkom BANDUNG BARAT','Telkom BANTEN','Telkom BEKASI','Telkom BENGKULU','Telkom BOGOR','Telkom CIREBON','Telkom DENPASAR','Telkom GORONTALO','Telkom JAKBAR','Telkom JAKPUS','Telkom JAKSEL','Telkom JAKTIM','Telkom JAKUT','Telkom JAMBI','Telkom JEMBER','Telkom KALBAR','Telkom KALSEL','Telkom KALTARA','Telkom KALTENG','Telkom KARAWANG','Telkom KEDIRI','Telkom KUDUS','Telkom LAMPUNG','Telkom MADIUN','Telkom MADURA','Telkom MAGELANG','Telkom MAKASAR','Telkom MALANG','Telkom MALUKU','Telkom MEDAN','Telkom NTB','Telkom NTT','Telkom PAPUA','Telkom PAPUA BARAT','Telkom PASURUAN','Telkom PEKALONGAN','Telkom PURWOKERTO','Telkom RIDAR','Telkom RIKEP','Telkom SAMARINDA','Telkom SEMARANG','Telkom SIDOARJO','Telkom SINGARAJA','Telkom SOLO','Telkom SUKABUMI','Telkom SULSELBAR','Telkom SULTENG','Telkom SULTRA','Telkom SULUT & MALUT','Telkom SUMBAR','Telkom SUMSEL','Telkom SUMUT','Telkom SURABAYA SELATAN','Telkom SURABAYA UTARA','Telkom TANGERANG','Telkom TASIKMALAYA','Telkom YOGYAKARTA'];
+let cacheRegional=['01','02','03','04','05','06','07'];
+let cacheCampaign=[];
+
 generateDataLokerContact();
-getListWitel();
-getListRegional();
 getListCampaign();
+
 $('#selectLevel').prepend('<option selected=""></option>').select2({
     theme: "bootstrap",
     placeholder: "Pilih Campaign Level",
     allowClear: true
 });
-$('#selectTag').select2({
-    placeholder: "Pilih Tag",
-    allowClear: true
-});
+
 window.modalEditCampaignShow = function(flag) {
     if (flag) {
         $('#editCampaign').modal('show');
@@ -24,6 +24,7 @@ window.modalEditCampaignShow = function(flag) {
         $('#editCampaign').modal('hide');
     }
 }
+
 window.modalAddContactShow = function(flag) {
     if (flag) {
         $('#selectTag').val(null).trigger('change');
@@ -32,48 +33,7 @@ window.modalAddContactShow = function(flag) {
         $('#addContact').modal('hide');
     }
 }
-let cacheWitel=[];
-window.getListWitel = function() {
-    $.ajax({
-        url: basse_path+'/getListWitel',
-        type: "POST",
-        success: function(result) {
-            cacheWitel = result;
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            // console.log('ERR Get Header');
-            // ajaxErrorResponse(xhr, ajaxOptions, thrownError);
-        }
-    });
-}
-let cacheRegional=[];
-window.getListRegional = function() {
-    $.ajax({
-        url: base_path+'/getListRegional',
-        type: "POST",
-        success: function(result) {
-            cacheRegional = result;
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            // console.log('ERR Get Header');
-            // ajaxErrorResponse(xhr, ajaxOptions, thrownError);
-        }
-    });
-}
-let cacheCampaign=[];
-window.getListCampaign = function() {
-    $.ajax({
-        url: base_path+'/getListCampaign',
-        type: "POST",
-        success: function(result) {
-            cacheCampaign = result;
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            // console.log('ERR Get Header');
-            // ajaxErrorResponse(xhr, ajaxOptions, thrownError);
-        }
-    });
-}
+
 document.getElementById('editCampaignForm').addEventListener("submit", function(e) {
     e.preventDefault(); // before the code
     let formData = Object.fromEntries(new FormData(this));
@@ -81,7 +41,7 @@ document.getElementById('editCampaignForm').addEventListener("submit", function(
     formData[$("#selectRegional").attr("name")] = $("#selectRegional").select2("val");
     $.ajax({
         type: "POST",
-        url: base_path+'/saveCampaign',
+        url: base_path+'nossablastwa/updateCampaign',
         data: formData,
         dataType: 'json',
         success: function () {
@@ -89,18 +49,19 @@ document.getElementById('editCampaignForm').addEventListener("submit", function(
             modalEditCampaignShow(false);
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            // ajaxErrorResponse(xhr, ajaxOptions, thrownError);
+            ajaxErrorResponse(xhr, ajaxOptions, thrownError);
         }
     });
     return false;
 });
+
 document.getElementById('addContactForm').addEventListener("submit", function(e) {
     e.preventDefault(); // before the code
     let formData = Object.fromEntries(new FormData(this));
     formData[$("#selectTag").attr("name")] = $("#selectTag").select2("val");
     $.ajax({
         type: "POST",
-        url: base_path+'/addContact',
+        url: base_path+'nossablastwa/addContact',
         data: formData,
         dataType: 'json',
         success: function () {
@@ -108,13 +69,27 @@ document.getElementById('addContactForm').addEventListener("submit", function(e)
             modalAddContactShow(false);
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            // ajaxErrorResponse(xhr, ajaxOptions, thrownError);
+            ajaxErrorResponse(xhr, ajaxOptions, thrownError);
         }
     });
     return false;
 });
 
-window.generateDataLokerContact = function() {
+function getListCampaign() {
+    $.ajax({
+        url: base_path+'nossablastwa/listDataCampaign',
+        type: "GET",
+        success: function(result) {
+            cacheCampaign = result;
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log('ERR listDataCampaign');
+            ajaxErrorResponse(xhr, ajaxOptions, thrownError);
+        }
+    });
+}
+
+function generateDataLokerContact() {
     let columnData = [{
             "data": "nama",
             "title": "Nama"
@@ -124,59 +99,49 @@ window.generateDataLokerContact = function() {
             "title": "Jabatan",
         },
         {
-            "data": "contact_number",
+            "data": "phone_number",
             "title": "Contact Number",
         },
         {
-            "data": "wilayah",
-            "title": "Wilayah",
-            "render": function ( data, type, row, meta ) {
-                let returnVal = '';
-                let temp = JSON.parse(data);
-                Object.entries(temp).forEach(([key_result, value_result]) => {
-                    returnVal += '<div class="row"><div class="col-4">'+key_result+'</div><div class="col-8">';
-                    value_result.forEach(element => {
-                        returnVal += element+' ';
-                    })
-                    returnVal += '</div></div>';
-                });
-                return returnVal;
-            }
-        },
-        {
-            "data": "campaign_level",
+            "data": "campaign",
             "title": "Campaign",
             "render": function ( data, type, row, meta ) {
-                let returnVal = '';
-                let temp = JSON.parse(data);
-                Object.entries(temp).forEach(([key_result, value_result]) => {
-                    returnVal += '<div class="row"><div class="col">'+key_result+'&nbsp;:&nbsp;'+value_result+'</div></div>';
-                });
-                return returnVal;
+                return concatenator(data);
             }
         },
         {
-            "data": "tag",
-            "title": "Tag",
+            "data": "level",
+            "title": "Level",
             "render": function ( data, type, row, meta ) {
-                let returnVal = '';
-                let temp = JSON.parse(data);
-                temp.forEach(element => {
-                    returnVal += element.substring(1)+' ';
-                });
-                return returnVal;
+                return concatenator(data);
             }
         },
         {
-            "data": null,
-            "title": "Status",
+            "data": "tk_region",
+            "title": "Regional",
             "render": function ( data, type, row, meta ) {
-                    let status = 'Active';
-                    if (row['campaign_level']=='{}') {status = 'Non Active';}
-                    return status;
-                }
+                return concatenator(data);
+            }
+        },
+        {
+            "data": "tk_subregion",
+            "title": "Witel",
+            "render": function ( data, type, row, meta ) {
+                return concatenator(data);
+            }
         },
     ];
+    function concatenator(data) {
+        if (Array.isArray(data)) {
+            let arrTemp = '';
+            data.forEach(element => {
+                arrTemp += element;
+            });
+            return arrTemp.substring(0,arrTemp.length-1);
+        } else {
+            return data;
+        }
+    }
     let tableTemp = document.getElementById('datatable');
     let tableFoot = document.createElement('tfoot');
     tableTemp.appendChild(tableFoot);
@@ -190,7 +155,7 @@ window.generateDataLokerContact = function() {
     datatable = $('#datatable').DataTable({
             "destroy": true,
             "ajax": {
-                "url": base_path+'nossablastwa/getDataLokerContact',
+                "url": base_path+'nossablastwa/listDataContact',
                 "type": "POST",
             },
             "columns": columnData,
@@ -212,8 +177,8 @@ window.generateDataLokerContact = function() {
     });
     $('#datatable tbody').on('dblclick', 'tr', function () { //Edit data contact
         let data = datatable.rows(this).data()[0];
-        let wilayah = JSON.parse(data.wilayah);
-        let campaign_level = JSON.parse(data.campaign_level);
+        // let wilayah = JSON.parse(data.wilayah);
+        // let campaign_level = JSON.parse(data.campaign_level);
         if ($('#selectWitel').hasClass("select2-hidden-accessible")) {
             $('#selectWitel').select2('destroy');
         }
@@ -226,18 +191,18 @@ window.generateDataLokerContact = function() {
             let newOption = new Option(element, element, false, false);
             $('#selectWitel').append(newOption);
         });
-        if (typeof wilayah.witel != 'undefined') {
-            wilayah.witel.forEach(element => {
-                if ($('#selectWitel').find("option[value='" + element + "']").length) {
-                    $('#selectWitel').val(element).trigger('change');
-                } else {
-                    // Create a DOM Option and pre-select by default
-                    let newOption = new Option(element, element, true, true);
-                    // Append it to the select
-                    $('#selectWitel').append(newOption);
-                }
-            });
-        }
+        // if (typeof wilayah.witel != 'undefined') {
+        //     wilayah.witel.forEach(element => {
+        //         if ($('#selectWitel').find("option[value='" + element + "']").length) {
+        //             $('#selectWitel').val(element).trigger('change');
+        //         } else {
+        //             // Create a DOM Option and pre-select by default
+        //             let newOption = new Option(element, element, true, true);
+        //             // Append it to the select
+        //             $('#selectWitel').append(newOption);
+        //         }
+        //     });
+        // }
         if ($('#selectRegional').hasClass("select2-hidden-accessible")) {
             $('#selectRegional').select2('destroy');
         }
@@ -250,16 +215,16 @@ window.generateDataLokerContact = function() {
             let newOption = new Option(element, element, false, false);
             $('#selectRegional').append(newOption);
         });
-        if (typeof wilayah.regional != 'undefined') {
-            wilayah.regional.forEach(element => {
-                if ($('#selectRegional').find("option[value='" + element + "']").length) {
-                    $('#selectRegional').val(element).trigger('change');
-                } else {
-                    let newOption = new Option(element, element, true, true);
-                    $('#selectRegional').append(newOption);
-                }
-            });
-        }
+        // if (typeof wilayah.regional != 'undefined') {
+        //     wilayah.regional.forEach(element => {
+        //         if ($('#selectRegional').find("option[value='" + element + "']").length) {
+        //             $('#selectRegional').val(element).trigger('change');
+        //         } else {
+        //             let newOption = new Option(element, element, true, true);
+        //             $('#selectRegional').append(newOption);
+        //         }
+        //     });
+        // }
         if ($('#selectCampaign').hasClass("select2-hidden-accessible")) {
             $('#selectCampaign').select2('destroy');
         }
@@ -273,28 +238,28 @@ window.generateDataLokerContact = function() {
             let newOption = new Option(element, element, false, false);
             $('#selectCampaign').append(newOption);
         });
-        if (!(campaign_level && Object.keys(campaign_level).length === 0 && Object.getPrototypeOf(campaign_level) === Object.prototype)) {
-            Object.entries(campaign_level).forEach(([key_result, value_result]) => {
-                if ($('#selectCampaign').find("option[value='" + key_result + "']").length) {
-                    $('#selectCampaign').val(key_result).trigger('change');
-                } else {
-                    let newOption = new Option(key_result, key_result, true, true);
-                    $('#selectCampaign').append(newOption);
-                }
-            });
-        }
-        if (!(campaign_level && Object.keys(campaign_level).length === 0 && Object.getPrototypeOf(campaign_level) === Object.prototype)) {
-            Object.entries(campaign_level).forEach(([key_result, value_result]) => {
-                if ($('#selectLevel').find("option[value='" + value_result + "']").length) {
-                    console.log(campaign_level)
-                    $('#selectLevel').val(value_result).trigger('change');
-                }
-            });
-        }
+        // if (!(campaign_level && Object.keys(campaign_level).length === 0 && Object.getPrototypeOf(campaign_level) === Object.prototype)) {
+        //     Object.entries(campaign_level).forEach(([key_result, value_result]) => {
+        //         if ($('#selectCampaign').find("option[value='" + key_result + "']").length) {
+        //             $('#selectCampaign').val(key_result).trigger('change');
+        //         } else {
+        //             let newOption = new Option(key_result, key_result, true, true);
+        //             $('#selectCampaign').append(newOption);
+        //         }
+        //     });
+        // }
+        // if (!(campaign_level && Object.keys(campaign_level).length === 0 && Object.getPrototypeOf(campaign_level) === Object.prototype)) {
+        //     Object.entries(campaign_level).forEach(([key_result, value_result]) => {
+        //         if ($('#selectLevel').find("option[value='" + value_result + "']").length) {
+        //             console.log(campaign_level)
+        //             $('#selectLevel').val(value_result).trigger('change');
+        //         }
+        //     });
+        // }
         document.getElementById('nama').value = data.nama;
         document.getElementById('jabatan').value = data.jabatan;
-        document.getElementById('contact_number').value = data.contact_number;
-        document.getElementById('userId').value = data.id;
+        document.getElementById('contact_number').value = data.phone_number;
+        document.getElementById('userId').value = data.phone_number;
         modalEditCampaignShow(true);
     });
 }

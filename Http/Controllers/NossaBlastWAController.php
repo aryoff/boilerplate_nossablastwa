@@ -21,6 +21,10 @@ class NossaBlastWAController extends Controller
         return view('nossablastwa::index');
     }
 
+    public function AdminContact()
+    {
+        return view('nossablastwa::AdminContact');
+    }
     public function APINossaTriggered(object $payload)
     {
         $searchParams = new \stdClass;
@@ -76,6 +80,58 @@ class NossaBlastWAController extends Controller
         $response = new \stdClass;
         $response->{$key} = $value;
         return $response;
+    }
+    public function listDataContact(Request $request)
+    {
+        $data = $request->validate([
+            'campaign' => 'nullable',
+        ]);
+        $response = new \stdClass;
+        $searchExtra = new \stdClass;
+        foreach ($data as $keyData => $valueData) {
+            $searchExtra->{$keyData} = $valueData;
+        }
+        $Dictionary = new DictionaryController;
+        $container = $Dictionary->retrieveValue('NossaBlastWA', 'Phone Number', $searchExtra);
+        $response->data = array();
+        foreach ($container as $element) {
+            $tempValue = json_decode($element->extra);
+            if (!property_exists($tempValue, 'tk_region')) {
+                $tempValue->tk_region = null;
+            }
+            if (!property_exists($tempValue, 'tk_subregion')) {
+                $tempValue->tk_subregion = null;
+            }
+            $tempValue->phone_number = $element->value;
+            $response->data[] = $tempValue;
+        }
+        return response()->json($response, 200);
+    }
+    public function listDataCampaign()
+    {
+        $Dictionary = new DictionaryController;
+        $container = $Dictionary->retrieveValue('NossaBlastWA', 'Campaign Blast');
+        $response = array();
+        foreach ($container as $element) {
+            $response[] = $element->value;
+        }
+        return response()->json($response, 200);
+    }
+    public function addContact(Request $request)
+    {
+        $data = $request->validate([
+            'nama' => 'required',
+            'jabatan' => 'required',
+            'contact_number' => 'required',
+        ]);
+        $Dictionary = new DictionaryController;
+        $extra = new \stdClass;
+        $extra->nama = $data['nama'];
+        $extra->jabatan = $data['jabatan'];
+        return response()->json($Dictionary->insert('NossaBlastWA', 'Phone Number', $data['contact_number'], $extra), 200);
+    }
+    public function updateCampaign(Request $request)
+    {
     }
 
     /**
