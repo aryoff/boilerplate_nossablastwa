@@ -16,9 +16,9 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="header-title mt-0">Data Table</h4>
+                            <h4 class="header-title mt-0">Data Contact</h4>
                             <div class="table-responsive dash-social">
-                                <table id="datatable" class="table table-bordered">
+                                <table id="datatable" class="table table-bordered" aria-hidden="true">
                                     <thead class="thead-light" style="text-align: center;">
                                     </thead>
                                     <tbody>
@@ -79,14 +79,14 @@
                                 <div class="form-group row">
                                     <label for="selectCampaign" class="col-sm-4 col-form-label">Campaign</label>
                                     <div class="col-sm-8">
-                                        <select id="selectCampaign" name="campaign" class="form-control" style="width:100%">
+                                        <select id="selectCampaign" name="campaign[]" class="form-control" multiple="multiple" style="width:100%">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="selectLevel" class="col-sm-4 col-form-label">Level</label>
                                     <div class="col-sm-8">
-                                        <select id="selectLevel" name="level" class="form-control" style="width:100%">
+                                        <select id="selectLevel" name="level[]" class="form-control" multiple="multiple" style="width:100%">
                                             <option value="1">Level 1</option>
                                             <option value="2">Level 2</option>
                                             <option value="3">Level 3</option>

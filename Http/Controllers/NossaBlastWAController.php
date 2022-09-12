@@ -70,7 +70,7 @@ class NossaBlastWAController extends Controller
             $data->TEMPLATE_DATA[] = $this->buildObject('13', $payload->update ?? 'null');
             $data->PHONE = $value->value;
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
-            Log::info(json_encode($result));
+            Log::info(json_encode($result)); //HACK
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
@@ -132,65 +132,31 @@ class NossaBlastWAController extends Controller
     }
     public function updateCampaign(Request $request)
     {
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
-    {
-        return view('nossablastwa::create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('nossablastwa::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('nossablastwa::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
+        $data = $request->validate([
+            'id' => 'required',
+            'nama' => 'required',
+            'jabatan' => 'nullable',
+            'contact_number' => 'required',
+            'listWitel' => 'nullable|array',
+            'listRegional' => 'nullable|array',
+            'campaign' => 'nullable|array',
+            'level' => 'nullable|array'
+        ]);
+        $Dictionary = new DictionaryController;
+        $newValue = false;
+        if ($data['id'] != $data['contact_number']) { //Ganti nomor
+            $newValue = $Dictionary->updateValue('NossaBlastWA', 'Phone Number', $data['id'], $data['contact_number']);
+        }
+        $extra = new \stdClass;
+        foreach ($data as $keyData => $valueData) {
+            $extra->{$keyData} = $valueData;
+        }
+        unset($extra->id);
+        unset($extra->contact_number);
+        if ($newValue) {
+            return response()->json($Dictionary->updateExtra('NossaBlastWA', 'Phone Number', $data['contact_number'], $extra), 200);
+        } else {
+            return response()->json($Dictionary->updateExtra('NossaBlastWA', 'Phone Number', $data['id'], $extra), 200);
+        }
     }
 }

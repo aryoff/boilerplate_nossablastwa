@@ -39,6 +39,8 @@ document.getElementById('editCampaignForm').addEventListener("submit", function(
     let formData = Object.fromEntries(new FormData(this));
     formData[$("#selectWitel").attr("name")] = $("#selectWitel").select2("val");
     formData[$("#selectRegional").attr("name")] = $("#selectRegional").select2("val");
+    formData[$("#selectCampaign").attr("name")] = $("#selectCampaign").select2("val");
+    formData[$("#selectLevel").attr("name")] = $("#selectLevel").select2("val");
     $.ajax({
         type: "POST",
         url: base_path+'nossablastwa/updateCampaign',
@@ -88,7 +90,32 @@ function getListCampaign() {
         }
     });
 }
-
+function fillSelectValue(id, variable) {
+    if (variable != null) {
+        if (Array.isArray(variable)) {
+            variable.forEach(element => {
+                if ($('#'+id).find("option[value='" + element + "']").length) {
+                    $('#'+id).val(element).trigger('change');
+                }
+            });    
+        } else {
+            if ($('#'+id).find("option[value='" + variable + "']").length) {
+                $('#'+id).val(variable).trigger('change');
+            }
+        }
+    }
+}
+function concatenator(data) {
+    if (Array.isArray(data)) {
+        let arrTemp = '';
+        data.forEach(element => {
+            arrTemp += element;
+        });
+        return arrTemp.substring(0,arrTemp.length-1);
+    } else {
+        return data;
+    }
+}
 function generateDataLokerContact() {
     let columnData = [{
             "data": "nama",
@@ -131,17 +158,6 @@ function generateDataLokerContact() {
             }
         },
     ];
-    function concatenator(data) {
-        if (Array.isArray(data)) {
-            let arrTemp = '';
-            data.forEach(element => {
-                arrTemp += element;
-            });
-            return arrTemp.substring(0,arrTemp.length-1);
-        } else {
-            return data;
-        }
-    }
     let tableTemp = document.getElementById('datatable');
     let tableFoot = document.createElement('tfoot');
     tableTemp.appendChild(tableFoot);
@@ -177,8 +193,10 @@ function generateDataLokerContact() {
     });
     $('#datatable tbody').on('dblclick', 'tr', function () { //Edit data contact
         let data = datatable.rows(this).data()[0];
-        // let wilayah = JSON.parse(data.wilayah);
-        // let campaign_level = JSON.parse(data.campaign_level);
+        let tk_subregion = data.tk_subregion;
+        let tk_region = data.tk_region;
+        let campaign = data.campaign;
+        let level = data.level;
         if ($('#selectWitel').hasClass("select2-hidden-accessible")) {
             $('#selectWitel').select2('destroy');
         }
@@ -191,18 +209,7 @@ function generateDataLokerContact() {
             let newOption = new Option(element, element, false, false);
             $('#selectWitel').append(newOption);
         });
-        // if (typeof wilayah.witel != 'undefined') {
-        //     wilayah.witel.forEach(element => {
-        //         if ($('#selectWitel').find("option[value='" + element + "']").length) {
-        //             $('#selectWitel').val(element).trigger('change');
-        //         } else {
-        //             // Create a DOM Option and pre-select by default
-        //             let newOption = new Option(element, element, true, true);
-        //             // Append it to the select
-        //             $('#selectWitel').append(newOption);
-        //         }
-        //     });
-        // }
+        fillSelectValue('selectWitel',tk_subregion);
         if ($('#selectRegional').hasClass("select2-hidden-accessible")) {
             $('#selectRegional').select2('destroy');
         }
@@ -215,16 +222,7 @@ function generateDataLokerContact() {
             let newOption = new Option(element, element, false, false);
             $('#selectRegional').append(newOption);
         });
-        // if (typeof wilayah.regional != 'undefined') {
-        //     wilayah.regional.forEach(element => {
-        //         if ($('#selectRegional').find("option[value='" + element + "']").length) {
-        //             $('#selectRegional').val(element).trigger('change');
-        //         } else {
-        //             let newOption = new Option(element, element, true, true);
-        //             $('#selectRegional').append(newOption);
-        //         }
-        //     });
-        // }
+        fillSelectValue('selectRegional',tk_region);
         if ($('#selectCampaign').hasClass("select2-hidden-accessible")) {
             $('#selectCampaign').select2('destroy');
         }
@@ -238,24 +236,9 @@ function generateDataLokerContact() {
             let newOption = new Option(element, element, false, false);
             $('#selectCampaign').append(newOption);
         });
-        // if (!(campaign_level && Object.keys(campaign_level).length === 0 && Object.getPrototypeOf(campaign_level) === Object.prototype)) {
-        //     Object.entries(campaign_level).forEach(([key_result, value_result]) => {
-        //         if ($('#selectCampaign').find("option[value='" + key_result + "']").length) {
-        //             $('#selectCampaign').val(key_result).trigger('change');
-        //         } else {
-        //             let newOption = new Option(key_result, key_result, true, true);
-        //             $('#selectCampaign').append(newOption);
-        //         }
-        //     });
-        // }
-        // if (!(campaign_level && Object.keys(campaign_level).length === 0 && Object.getPrototypeOf(campaign_level) === Object.prototype)) {
-        //     Object.entries(campaign_level).forEach(([key_result, value_result]) => {
-        //         if ($('#selectLevel').find("option[value='" + value_result + "']").length) {
-        //             console.log(campaign_level)
-        //             $('#selectLevel').val(value_result).trigger('change');
-        //         }
-        //     });
-        // }
+        fillSelectValue('selectCampaign',campaign);
+        $('#selectLevel').val(null).trigger('change');
+        fillSelectValue('selectLevel',level);
         document.getElementById('nama').value = data.nama;
         document.getElementById('jabatan').value = data.jabatan;
         document.getElementById('contact_number').value = data.phone_number;
