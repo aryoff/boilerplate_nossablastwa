@@ -11,8 +11,7 @@ let cacheCampaign=[];
 generateDataLokerContact();
 getListCampaign();
 
-$('#selectLevel').prepend('<option selected=""></option>').select2({
-    theme: "bootstrap",
+$('#selectLevel').select2({
     placeholder: "Pilih Campaign Level",
     allowClear: true
 });
@@ -37,10 +36,18 @@ window.modalAddContactShow = function(flag) {
 document.getElementById('editCampaignForm').addEventListener("submit", function(e) {
     e.preventDefault(); // before the code
     let formData = Object.fromEntries(new FormData(this));
-    formData[$("#selectWitel").attr("name")] = $("#selectWitel").select2("val");
-    formData[$("#selectRegional").attr("name")] = $("#selectRegional").select2("val");
-    formData[$("#selectCampaign").attr("name")] = $("#selectCampaign").select2("val");
-    formData[$("#selectLevel").attr("name")] = $("#selectLevel").select2("val");
+    if ($("#selectWitel").select2("val")!='') {
+        formData[$("#selectWitel").attr("name")] = $("#selectWitel").select2("val");
+    }
+    if ($("#selectRegional").select2("val")!='') {
+        formData[$("#selectRegional").attr("name")] = $("#selectRegional").select2("val");
+    }
+    if ($("#selectCampaign").select2("val")!='') {
+        formData[$("#selectCampaign").attr("name")] = $("#selectCampaign").select2("val");
+    }
+    if ($("#selectLevel").select2("val")!='') {
+        formData[$("#selectLevel").attr("name")] = $("#selectLevel").select2("val");
+    }
     $.ajax({
         type: "POST",
         url: base_path+'nossablastwa/updateCampaign',
@@ -109,7 +116,7 @@ function concatenator(data) {
     if (Array.isArray(data)) {
         let arrTemp = '';
         data.forEach(element => {
-            arrTemp += element;
+            arrTemp += element+',';
         });
         return arrTemp.substring(0,arrTemp.length-1);
     } else {
@@ -227,8 +234,7 @@ function generateDataLokerContact() {
             $('#selectCampaign').select2('destroy');
         }
         document.getElementById('selectCampaign').innerHTML = '';
-        $('#selectCampaign').prepend('<option selected=""></option>').select2({
-            theme: 'bootstrap',
+        $('#selectCampaign').select2({
             placeholder: "Pilih Campaign",
             allowClear: true
         });

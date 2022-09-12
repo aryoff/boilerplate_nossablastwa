@@ -65,14 +65,14 @@
                                 <div class="form-group row">
                                     <label for="selectWitel" class="col-sm-4 col-form-label">Witel</label>
                                     <div class="col-sm-8">
-                                        <select id="selectWitel" name="listWitel[]" class="form-control" multiple="multiple" style="width:100%">
+                                        <select id="selectWitel" name="tk_subregion[]" class="form-control" multiple="multiple" style="width:100%">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="selectRegional" class="col-sm-4 col-form-label">Regional</label>
                                     <div class="col-sm-8">
-                                        <select id="selectRegional" name="listRegional[]" class="form-control" style="width:100%" multiple="multiple">
+                                        <select id="selectRegional" name="tk_region[]" class="form-control" style="width:100%" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>

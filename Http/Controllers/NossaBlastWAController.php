@@ -132,8 +132,8 @@ class NossaBlastWAController extends Controller
             'nama' => 'required',
             'jabatan' => 'nullable',
             'contact_number' => 'required',
-            'listWitel' => 'nullable|array',
-            'listRegional' => 'nullable|array',
+            'tk_subregion' => 'nullable|array',
+            'tk_region' => 'nullable|array',
             'campaign' => 'nullable|array',
             'level' => 'nullable|array'
         ]);
@@ -144,10 +144,10 @@ class NossaBlastWAController extends Controller
         }
         $extra = new \stdClass;
         foreach ($data as $keyData => $valueData) {
-            $extra->{$keyData} = $valueData;
+            if ($keyData != 'id' && $keyData != 'contact_number' && !empty($valueData)) {
+                $extra->{$keyData} = $valueData;
+            }
         }
-        unset($extra->id);
-        unset($extra->contact_number);
         if ($newValue) {
             return response()->json($Dictionary->updateExtra('NossaBlastWA', 'Phone Number', $data['contact_number'], $extra), 200);
         } else {
