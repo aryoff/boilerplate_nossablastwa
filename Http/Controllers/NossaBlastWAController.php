@@ -66,7 +66,7 @@ class NossaBlastWAController extends Controller
             $data->TEMPLATE_DATA[] = $this->buildObject('13', $payload->update ?? 'null');
             $data->PHONE = $value->value;
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
-            Log::info($result);
+            Log::info(json_encode($result));
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
