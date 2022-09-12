@@ -47,25 +47,24 @@ class NossaBlastWAController extends Controller
         $dataTemplate =  new \stdClass;
         $dataTemplate->TICKET_ID = $payload->incident ?? '';
         $dataTemplate->TEMPLATE_DATA = array();
-        $dataTemplate->TEMPLATE_DATA[0] = new \stdClass;
-        $dataTemplate->TEMPLATE_DATA[0]->{'1'} = 'L' . $payload->level ?? '';
-        $dataTemplate->TEMPLATE_DATA[0]->{'4'} = $payload->customer_type ?? '';
-        $dataTemplate->TEMPLATE_DATA[0]->{'5'} = $payload->incident ?? '';
-        $dataTemplate->TEMPLATE_DATA[0]->{'6'} = $payload->tk_subregion ?? '';
-        $dataTemplate->TEMPLATE_DATA[0]->{'7'} = $payload->incident_age ?? '' . ' Jam';
-        $dataTemplate->TEMPLATE_DATA[0]->{'8'} = $payload->lapul ?? '';
-        $dataTemplate->TEMPLATE_DATA[0]->{'9'} = $payload->tk_urgensi ?? '';
-        $dataTemplate->TEMPLATE_DATA[0]->{'10'} = $payload->reportdate ?? '';
-        $dataTemplate->TEMPLATE_DATA[0]->{'11'} = $payload->serviceno ?? '';
-        $dataTemplate->TEMPLATE_DATA[0]->{'12'} = $payload->keluhan ?? '';
-        $dataTemplate->TEMPLATE_DATA[0]->{'13'} = $payload->update ?? '';
+        $dataTemplate->TEMPLATE_DATA[0] = $this->buildObject('1', 'L' . $payload->level ?? '');
+        $dataTemplate->TEMPLATE_DATA[3] = $this->buildObject('4', $payload->customer_type ?? '');
+        $dataTemplate->TEMPLATE_DATA[4] = $this->buildObject('5', $payload->incident ?? '');
+        $dataTemplate->TEMPLATE_DATA[5] = $this->buildObject('6', $payload->tk_subregion ?? '');
+        $dataTemplate->TEMPLATE_DATA[6] = $this->buildObject('7', $payload->incident_age ?? '');
+        $dataTemplate->TEMPLATE_DATA[7] = $this->buildObject('8', $payload->lapul ?? '');
+        $dataTemplate->TEMPLATE_DATA[8] = $this->buildObject('9', $payload->tk_urgensi ?? '');
+        $dataTemplate->TEMPLATE_DATA[9] = $this->buildObject('10', $payload->reportdate ?? '');
+        $dataTemplate->TEMPLATE_DATA[10] = $this->buildObject('11', $payload->serviceno ?? '');
+        $dataTemplate->TEMPLATE_DATA[11] = $this->buildObject('12', $payload->keluhan ?? '');
+        $dataTemplate->TEMPLATE_DATA[12] = $this->buildObject('13', $payload->update ?? '');
         $IntegratedAPI = new IntegratedAPIController;
         foreach ($sendTarget as $value) {
             $extraSendTarget = json_decode($value->extra);
             $data = $dataTemplate;
-            $data->TEMPLATE_DATA[0]->{'2'} = $extraSendTarget->jabatan ?? '';
+            $data->TEMPLATE_DATA[1] = $this->buildObject('2', $extraSendTarget->jabatan ?? '');
             $date = new DateTime('now');
-            $data->TEMPLATE_DATA[0]->{'3'} = $date->format('Y-m-d H:i:s');
+            $dataTemplate->TEMPLATE_DATA[2] = $this->buildObject('3', $date->format('Y-m-d H:i:s'));
             $data->PHONE = $value->value;
             Log::info(json_encode($data));
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
@@ -73,6 +72,12 @@ class NossaBlastWAController extends Controller
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
+    }
+    private function buildObject(string $key, string $value): object
+    {
+        $response = new \stdClass;
+        $response->{$key} = $value;
+        return $response;
     }
 
     /**
