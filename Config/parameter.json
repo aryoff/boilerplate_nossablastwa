@@ -1,0 +1,4 @@
+{
+    "name": "NossaBlastWA",
+    "require": ["IntegratedAPI"]
+}

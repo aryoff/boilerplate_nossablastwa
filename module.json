@@ -1,0 +1,13 @@
+{
+    "name": "NossaBlastWA",
+    "alias": "nossablastwa",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Modules\\NossaBlastWA\\Providers\\NossaBlastWAServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
