@@ -46,25 +46,26 @@ class NossaBlastWAController extends Controller
         }
         $dataTemplate =  new \stdClass;
         $dataTemplate->TICKET_ID = $payload->incident;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 1)} = 'L' . $payload->level;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 4)} = $payload->customer_type;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 5)} = $payload->incident;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 6)} = $payload->tk_subregion;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 7)} = $payload->incident_age . ' Jam';
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 8)} = $payload->lapul;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 9)} = $payload->tk_urgensi;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 10)} = $payload->reportdate;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 11)} = $payload->serviceno;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 12)} = $payload->keluhan;
-        $dataTemplate->TEMPLATE_DATA[0]->{((string) 13)} = $payload->update;
+        $dataTemplate->TEMPLATE_DATA[0]->{'1'} = 'L' . $payload->level;
+        $dataTemplate->TEMPLATE_DATA[0]->{'4'} = $payload->customer_type;
+        $dataTemplate->TEMPLATE_DATA[0]->{'5'} = $payload->incident;
+        $dataTemplate->TEMPLATE_DATA[0]->{'6'} = $payload->tk_subregion;
+        $dataTemplate->TEMPLATE_DATA[0]->{'7'} = $payload->incident_age . ' Jam';
+        $dataTemplate->TEMPLATE_DATA[0]->{'8'} = $payload->lapul;
+        $dataTemplate->TEMPLATE_DATA[0]->{'9'} = $payload->tk_urgensi;
+        $dataTemplate->TEMPLATE_DATA[0]->{'10'} = $payload->reportdate;
+        $dataTemplate->TEMPLATE_DATA[0]->{'11'} = $payload->serviceno;
+        $dataTemplate->TEMPLATE_DATA[0]->{'12'} = $payload->keluhan;
+        $dataTemplate->TEMPLATE_DATA[0]->{'13'} = $payload->update;
         $IntegratedAPI = new IntegratedAPIController;
         foreach ($sendTarget as $value) {
             $extraSendTarget = json_decode($value->extra);
             $data = $dataTemplate;
-            $data->TEMPLATE_DATA[0]->{((string) 2)} = $extraSendTarget->jabatan;
-            $data->TEMPLATE_DATA[0]->{((string) 3)} = new DateTime('now');
+            $data->TEMPLATE_DATA[0]->{'2'} = $extraSendTarget->jabatan;
+            $data->TEMPLATE_DATA[0]->{'3'} = new DateTime('now');
             $data->PHONE = $value->value;
             $IntegratedAPI->send($campaignBlast->send_api_id, $data);
+            var_dump($data);
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
