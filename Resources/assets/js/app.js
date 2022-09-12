@@ -4,15 +4,35 @@ $.ajaxSetup({
         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
     }
 });
-let cacheWitel=['Telkom ACEH','Telkom BABEL','Telkom BALIKPAPAN','Telkom BANDUNG','Telkom BANDUNG BARAT','Telkom BANTEN','Telkom BEKASI','Telkom BENGKULU','Telkom BOGOR','Telkom CIREBON','Telkom DENPASAR','Telkom GORONTALO','Telkom JAKBAR','Telkom JAKPUS','Telkom JAKSEL','Telkom JAKTIM','Telkom JAKUT','Telkom JAMBI','Telkom JEMBER','Telkom KALBAR','Telkom KALSEL','Telkom KALTARA','Telkom KALTENG','Telkom KARAWANG','Telkom KEDIRI','Telkom KUDUS','Telkom LAMPUNG','Telkom MADIUN','Telkom MADURA','Telkom MAGELANG','Telkom MAKASAR','Telkom MALANG','Telkom MALUKU','Telkom MEDAN','Telkom NTB','Telkom NTT','Telkom PAPUA','Telkom PAPUA BARAT','Telkom PASURUAN','Telkom PEKALONGAN','Telkom PURWOKERTO','Telkom RIDAR','Telkom RIKEP','Telkom SAMARINDA','Telkom SEMARANG','Telkom SIDOARJO','Telkom SINGARAJA','Telkom SOLO','Telkom SUKABUMI','Telkom SULSELBAR','Telkom SULTENG','Telkom SULTRA','Telkom SULUT & MALUT','Telkom SUMBAR','Telkom SUMSEL','Telkom SUMUT','Telkom SURABAYA SELATAN','Telkom SURABAYA UTARA','Telkom TANGERANG','Telkom TASIKMALAYA','Telkom YOGYAKARTA'];
+let cacheWitel=[];
 let cacheRegional=['01','02','03','04','05','06','07'];
 let cacheCampaign=[];
 
 generateDataLokerContact();
 getListCampaign();
+getListWitel();
+
+$('select').select2({
+    theme: 'bootstrap4',
+});
+
+$('#selectWitel').select2({
+    placeholder: "Pilih Witel",
+    allowClear: true
+});
+
+$('#selectRegional').select2({
+    placeholder: "Pilih Regional",
+    allowClear: true
+});
+
+$('#selectCampaign').select2({
+    placeholder: "Pilih Campaign Blast",
+    allowClear: true
+});
 
 $('#selectLevel').select2({
-    placeholder: "Pilih Campaign Level",
+    placeholder: 'Pilih Campaign Level',
     allowClear: true
 });
 
@@ -93,6 +113,19 @@ function getListCampaign() {
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log('ERR listDataCampaign');
+            ajaxErrorResponse(xhr, ajaxOptions, thrownError);
+        }
+    });
+}
+function getListWitel() {
+    $.ajax({
+        url: base_path+'nossablastwa/listDataWitel',
+        type: "GET",
+        success: function(result) {
+            cacheWitel = result;
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log('ERR listDataWitel');
             ajaxErrorResponse(xhr, ajaxOptions, thrownError);
         }
     });
@@ -204,40 +237,19 @@ function generateDataLokerContact() {
         let tk_region = data.tk_region;
         let campaign = data.campaign;
         let level = data.level;
-        if ($('#selectWitel').hasClass("select2-hidden-accessible")) {
-            $('#selectWitel').select2('destroy');
-        }
         document.getElementById('selectWitel').innerHTML = '';
-        $('#selectWitel').select2({
-            placeholder: "Pilih Witel",
-            allowClear: true
-        });
         cacheWitel.forEach(element=>{
             let newOption = new Option(element, element, false, false);
             $('#selectWitel').append(newOption);
         });
         fillSelectValue('selectWitel',tk_subregion);
-        if ($('#selectRegional').hasClass("select2-hidden-accessible")) {
-            $('#selectRegional').select2('destroy');
-        }
         document.getElementById('selectRegional').innerHTML = '';
-        $('#selectRegional').select2({
-            placeholder: "Pilih Regional",
-            allowClear: true
-        });
         cacheRegional.forEach(element=>{
             let newOption = new Option(element, element, false, false);
             $('#selectRegional').append(newOption);
         });
         fillSelectValue('selectRegional',tk_region);
-        if ($('#selectCampaign').hasClass("select2-hidden-accessible")) {
-            $('#selectCampaign').select2('destroy');
-        }
         document.getElementById('selectCampaign').innerHTML = '';
-        $('#selectCampaign').select2({
-            placeholder: "Pilih Campaign",
-            allowClear: true
-        });
         cacheCampaign.forEach(element=>{
             let newOption = new Option(element, element, false, false);
             $('#selectCampaign').append(newOption);

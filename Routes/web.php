@@ -14,6 +14,7 @@
 Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'nossablastwa'], function () {
     Route::post('/listDataContact', 'NossaBlastWAController@listDataContact');
     Route::get('/listDataCampaign', 'NossaBlastWAController@listDataCampaign');
+    Route::get('/listDataWitel', 'NossaBlastWAController@listDataWitel');
     Route::get('/AdminContact', 'NossaBlastWAController@AdminContact')->name('AdminContact');
     Route::post('/updateCampaign', 'NossaBlastWAController@updateCampaign');
     Route::post('/addContact', 'NossaBlastWAController@addContact');

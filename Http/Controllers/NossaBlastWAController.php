@@ -62,6 +62,9 @@ class NossaBlastWAController extends Controller
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
+        /*        if ($Dictionary->retrieveExtra('NossaBlastWA','Witel Telkom',$payload->tk_subregion)!=null) { //collect data subregion
+            $Dictionary->insert('NossaBlastWA','Witel Telkom',$payload->tk_subregion);
+        }*/
     }
     private function jsonbSearchObjectConverter(string $key, $value): string
     {
@@ -106,6 +109,16 @@ class NossaBlastWAController extends Controller
     {
         $Dictionary = new DictionaryController;
         $container = $Dictionary->retrieveValue('NossaBlastWA', 'Campaign Blast');
+        $response = array();
+        foreach ($container as $element) {
+            $response[] = $element->value;
+        }
+        return response()->json($response, 200);
+    }
+    public function listDataWitel()
+    {
+        $Dictionary = new DictionaryController;
+        $container = $Dictionary->retrieveValue('NossaBlastWA', 'Witel Telkom');
         $response = array();
         foreach ($container as $element) {
             $response[] = $element->value;

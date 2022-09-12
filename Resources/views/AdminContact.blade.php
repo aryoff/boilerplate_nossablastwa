@@ -5,29 +5,21 @@
 @endsection
 
 @section('content')
-    <div class="card mt-2">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">
+                <h4 class="header-title">Data Contact</h4>
+            </span>
+            <button type="button" class="btn btn-primary float-right" onclick="modalAddContactShow(true)">Add New Contact</button>
+        </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <button type="button" class="btn btn-primary" onclick="modalAddContactShow(true)">Add New Contact</button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="header-title mt-0">Data Contact</h4>
-                            <div class="table-responsive dash-social">
-                                <table id="datatable" class="table table-bordered" aria-hidden="true">
-                                    <thead class="thead-light" style="text-align: center;">
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="table-responsive">
+                <table id="datatable" class="table-striped no-margin" style="width:100%" aria-hidden="true">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -65,28 +57,28 @@
                                 <div class="form-group row">
                                     <label for="selectWitel" class="col-sm-4 col-form-label">Witel</label>
                                     <div class="col-sm-8">
-                                        <select id="selectWitel" name="tk_subregion[]" class="form-control" multiple="multiple" style="width:100%">
+                                        <select id="selectWitel" name="tk_subregion[]" class="form-control select2" multiple="multiple" style="width:100%">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="selectRegional" class="col-sm-4 col-form-label">Regional</label>
                                     <div class="col-sm-8">
-                                        <select id="selectRegional" name="tk_region[]" class="form-control" style="width:100%" multiple="multiple">
+                                        <select id="selectRegional" name="tk_region[]" class="form-control select2" style="width:100%" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="selectCampaign" class="col-sm-4 col-form-label">Campaign</label>
                                     <div class="col-sm-8">
-                                        <select id="selectCampaign" name="campaign[]" class="form-control" multiple="multiple" style="width:100%">
+                                        <select id="selectCampaign" name="campaign[]" class="form-control select2" multiple="multiple" style="width:100%">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="selectLevel" class="col-sm-4 col-form-label">Level</label>
                                     <div class="col-sm-8">
-                                        <select id="selectLevel" name="level[]" class="form-control" multiple="multiple" style="width:100%">
+                                        <select id="selectLevel" name="level[]" class="form-control select2" multiple="multiple" style="width:100%">
                                             <option value="1">Level 1</option>
                                             <option value="2">Level 2</option>
                                             <option value="3">Level 3</option>
@@ -95,7 +87,7 @@
                                 </div>
                                 <input type="hidden" id="userId" name="id"/>
                                 <div class="row" style="float: right;">
-                                    <input type="submit" value="Submit" class="btn btn-success">
+                                    <input type="submit" value="Update" class="btn btn-success">
                                 </div>
                             </form>
                         </div>
@@ -136,7 +128,7 @@
                                     </div>
                                 </div>
                                 <div class="row" style="float: right;">
-                                    <input type="submit" value="Submit" class="btn btn-success">
+                                    <input type="submit" value="Save" class="btn btn-success">
                                 </div>
                             </form>
                         </div>
