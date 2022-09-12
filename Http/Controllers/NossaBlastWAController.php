@@ -64,7 +64,8 @@ class NossaBlastWAController extends Controller
             $extraSendTarget = json_decode($value->extra);
             $data = $dataTemplate;
             $data->TEMPLATE_DATA[0]->{'2'} = $extraSendTarget->jabatan;
-            $data->TEMPLATE_DATA[0]->{'3'} = new DateTime('now');
+            $date = new DateTime('now');
+            $data->TEMPLATE_DATA[0]->{'3'} = $date->format('Y-m-d H:i:s');
             $data->PHONE = $value->value;
             Log::info(json_encode($data));
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
