@@ -45,7 +45,7 @@ class NossaBlastWAController extends Controller
             return false;
         }
         $dataTemplate =  new \stdClass;
-        $dataTemplate->TICKET_ID = $payload->incident;
+        $dataTemplate->TICKET_ID = $payload->incident ?? '';
         $dataTemplate->TEMPLATE_DATA = array();
         $dataTemplate->TEMPLATE_DATA[0] = new \stdClass;
         $dataTemplate->TEMPLATE_DATA[0]->{'1'} = 'L' . $payload->level ?? '';
@@ -63,7 +63,7 @@ class NossaBlastWAController extends Controller
         foreach ($sendTarget as $value) {
             $extraSendTarget = json_decode($value->extra);
             $data = $dataTemplate;
-            $data->TEMPLATE_DATA[0]->{'2'} = $extraSendTarget->jabatan;
+            $data->TEMPLATE_DATA[0]->{'2'} = $extraSendTarget->jabatan ?? '';
             $date = new DateTime('now');
             $data->TEMPLATE_DATA[0]->{'3'} = $date->format('Y-m-d H:i:s');
             $data->PHONE = $value->value;
