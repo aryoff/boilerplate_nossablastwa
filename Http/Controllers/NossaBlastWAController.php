@@ -79,14 +79,7 @@ class NossaBlastWAController extends Controller
     }
     public function listDataContact(Request $request)
     {
-        // $data = $request->validate([
-        //     'campaign' => 'nullable',
-        // ]);
         $response = new \stdClass;
-        // $searchExtra = new \stdClass;
-        // foreach ($data as $keyData => $valueData) {
-        //     $searchExtra->{$keyData} = $valueData;
-        // }
         $Dictionary = new DictionaryController;
         $container = $Dictionary->retrieveValue('NossaBlastWA', 'Phone Number');
         $response->data = array();
@@ -97,6 +90,12 @@ class NossaBlastWAController extends Controller
             }
             if (!property_exists($tempValue, 'tk_subregion')) {
                 $tempValue->tk_subregion = null;
+            }
+            if (!property_exists($tempValue, 'campaign')) {
+                $tempValue->campaign = null;
+            }
+            if (!property_exists($tempValue, 'level')) {
+                $tempValue->level = null;
             }
             $tempValue->phone_number = $element->value;
             $response->data[] = $tempValue;
