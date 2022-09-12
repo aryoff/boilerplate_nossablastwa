@@ -27,20 +27,8 @@ class NossaBlastWAController extends Controller
     }
     public function APINossaTriggered(object $payload)
     {
-        $searchParams = new \stdClass;
-        switch ((string) $payload->level) {
-            case '2':
-                $searchParams->tk_subregion = $payload->tk_subregion;
-                break;
-            case '3':
-                $searchParams->tk_region = $payload->tk_region;
-                break;
-            default:
-                # code...
-                break;
-        }
-        $searchParams->level = $payload->level;
-        $searchParams->campaign = $payload->campaign;
+        $searchParams = ' AND ' . $this->jsonbSearchObjectConverter('level', $payload->level) . ' AND ' . $this->jsonbSearchObjectConverter('campaign', $payload->campaign) . ' AND (' . $this->jsonbSearchObjectConverter('tk_region', $payload->tk_region) . ' OR ' . $this->jsonbSearchObjectConverter('tk_subregion', $payload->tk_subregion) . ')';
+
         $Dictionary = new DictionaryController;
         $sendTarget = $Dictionary->retrieveValue('NossaBlastWA', 'Phone Number', $searchParams);
         $campaignBlast = $Dictionary->retrieveExtra('NossaBlastWA', 'Campaign Blast', $payload->campaign);
@@ -75,6 +63,14 @@ class NossaBlastWAController extends Controller
             //TODO result send nya pakai callback ? mekanisme ???
         }
     }
+    private function jsonbSearchObjectConverter(string $key, $value): string
+    {
+        if (is_numeric($value) && !is_string($value)) {
+            return "(jsonb_exists(extra, '$key') AND jsonb_exists(extra->'$key', $value))";
+        } else {
+            return "(jsonb_exists(extra, '$key') AND jsonb_exists(extra->'$key', '$value'))";
+        }
+    }
     private function buildObject(string $key, string $value): object
     {
         $response = new \stdClass;
@@ -83,16 +79,16 @@ class NossaBlastWAController extends Controller
     }
     public function listDataContact(Request $request)
     {
-        $data = $request->validate([
-            'campaign' => 'nullable',
-        ]);
+        // $data = $request->validate([
+        //     'campaign' => 'nullable',
+        // ]);
         $response = new \stdClass;
-        $searchExtra = new \stdClass;
-        foreach ($data as $keyData => $valueData) {
-            $searchExtra->{$keyData} = $valueData;
-        }
+        // $searchExtra = new \stdClass;
+        // foreach ($data as $keyData => $valueData) {
+        //     $searchExtra->{$keyData} = $valueData;
+        // }
         $Dictionary = new DictionaryController;
-        $container = $Dictionary->retrieveValue('NossaBlastWA', 'Phone Number', $searchExtra);
+        $container = $Dictionary->retrieveValue('NossaBlastWA', 'Phone Number');
         $response->data = array();
         foreach ($container as $element) {
             $tempValue = json_decode($element->extra);
