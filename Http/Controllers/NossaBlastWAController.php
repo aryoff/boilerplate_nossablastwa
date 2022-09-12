@@ -46,6 +46,8 @@ class NossaBlastWAController extends Controller
         }
         $dataTemplate =  new \stdClass;
         $dataTemplate->TICKET_ID = $payload->incident;
+        $dataTemplate->TEMPLATE_DATA = array();
+        $dataTemplate->TEMPLATE_DATA[0] = new \stdClass;
         $dataTemplate->TEMPLATE_DATA[0]->{'1'} = 'L' . $payload->level;
         $dataTemplate->TEMPLATE_DATA[0]->{'4'} = $payload->customer_type;
         $dataTemplate->TEMPLATE_DATA[0]->{'5'} = $payload->incident;
