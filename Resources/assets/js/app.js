@@ -54,23 +54,26 @@ window.modalAddContactShow = function(flag) {
 }
 
 window.deleteContact = function() {
-    let formData = {
-        id: document.getElementById('userId').value,
-    };
-    $.ajax({
-        type: "POST",
-        url: base_path+'nossablastwa/deleteContact',
-        data: formData,
-        dataType: 'json',
-        success: function () {
-            datatable.ajax.reload( null, false );
-            modalEditCampaignShow(false);
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            console.log('ERR deleteContact');
-            ajaxErrorResponse(xhr, ajaxOptions, thrownError);
-        }
-    });
+    let phone_number = document.getElementById('userId').value;
+    if (confirm('Delete Phone Number '+phone_number+' dari database ?')) {
+        let formData = {
+            id: phone_number,
+        };
+        $.ajax({
+            type: "POST",
+            url: base_path+'nossablastwa/deleteContact',
+            data: formData,
+            dataType: 'json',
+            success: function () {
+                datatable.ajax.reload( null, false );
+                modalEditCampaignShow(false);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log('ERR deleteContact');
+                ajaxErrorResponse(xhr, ajaxOptions, thrownError);
+            }
+        });
+    }
 }
 
 if (!!document.getElementById('editCampaignForm')) {
