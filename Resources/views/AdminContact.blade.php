@@ -86,9 +86,8 @@
                                     </div>
                                 </div>
                                 <input type="hidden" id="userId" name="id"/>
-                                <div class="row" style="float: right;">
-                                    <input type="submit" value="Update" class="btn btn-success">
-                                </div>
+                                <button type="button" class="btn btn-danger float-left" onclick="deleteContact()">Delete</button>
+                                <input type="submit" value="Update" class="btn btn-success float-right">
                             </form>
                         </div>
                     </div>

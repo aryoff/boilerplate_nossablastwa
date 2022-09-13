@@ -54,6 +54,7 @@ window.modalAddContactShow = function(flag) {
 }
 
 window.deleteContact = function() {
+    e.preventDefault();
     let formData = {
         id: document.getElementById('userId').value,
     };
@@ -71,6 +72,7 @@ window.deleteContact = function() {
             ajaxErrorResponse(xhr, ajaxOptions, thrownError);
         }
     });
+    return false;
 }
 
 if (!!document.getElementById('editCampaignForm')) {
