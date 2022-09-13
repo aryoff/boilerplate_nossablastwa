@@ -138,6 +138,14 @@ class NossaBlastWAController extends Controller
         $extra->jabatan = $data['jabatan'];
         return response()->json($Dictionary->insert('NossaBlastWA', 'Phone Number', $data['contact_number'], $extra), 200);
     }
+    public function deleteContact(Request $request)
+    {
+        $data = $request->validate([
+            'id' => 'required',
+        ]);
+        $Dictionary = new DictionaryController;
+        return response()->json($Dictionary->deleteByValue('NossaBlastWA', 'Phone Number', $data['id']), 200);
+    }
     public function updateCampaign(Request $request)
     {
         $data = $request->validate([

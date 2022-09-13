@@ -53,24 +53,13 @@ window.modalAddContactShow = function(flag) {
     }
 }
 
-document.getElementById('editCampaignForm').addEventListener("submit", function(e) {
-    e.preventDefault(); // before the code
-    let formData = Object.fromEntries(new FormData(this));
-    if ($("#selectWitel").select2("val")!='') {
-        formData[$("#selectWitel").attr("name")] = $("#selectWitel").select2("val");
-    }
-    if ($("#selectRegional").select2("val")!='') {
-        formData[$("#selectRegional").attr("name")] = $("#selectRegional").select2("val");
-    }
-    if ($("#selectCampaign").select2("val")!='') {
-        formData[$("#selectCampaign").attr("name")] = $("#selectCampaign").select2("val");
-    }
-    if ($("#selectLevel").select2("val")!='') {
-        formData[$("#selectLevel").attr("name")] = $("#selectLevel").select2("val");
-    }
+window.deleteContact = function() {
+    let formData = {
+        id: document.getElementById('userId').value,
+    };
     $.ajax({
         type: "POST",
-        url: base_path+'nossablastwa/updateCampaign',
+        url: base_path+'nossablastwa/deleteContact',
         data: formData,
         dataType: 'json',
         success: function () {
@@ -78,31 +67,68 @@ document.getElementById('editCampaignForm').addEventListener("submit", function(
             modalEditCampaignShow(false);
         },
         error: function (xhr, ajaxOptions, thrownError) {
+            console.log('ERR deleteContact');
             ajaxErrorResponse(xhr, ajaxOptions, thrownError);
         }
     });
-    return false;
-});
+}
 
-document.getElementById('addContactForm').addEventListener("submit", function(e) {
-    e.preventDefault(); // before the code
-    let formData = Object.fromEntries(new FormData(this));
-    formData[$("#selectTag").attr("name")] = $("#selectTag").select2("val");
-    $.ajax({
-        type: "POST",
-        url: base_path+'nossablastwa/addContact',
-        data: formData,
-        dataType: 'json',
-        success: function () {
-            datatable.ajax.reload( null, false );
-            modalAddContactShow(false);
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            ajaxErrorResponse(xhr, ajaxOptions, thrownError);
+if (!!document.getElementById('editCampaignForm')) {
+    document.getElementById('editCampaignForm').addEventListener("submit", function(e) {
+        e.preventDefault(); // before the code
+        let formData = Object.fromEntries(new FormData(this));
+        if ($("#selectWitel").select2("val")!='') {
+            formData[$("#selectWitel").attr("name")] = $("#selectWitel").select2("val");
         }
-    });
-    return false;
-});
+        if ($("#selectRegional").select2("val")!='') {
+            formData[$("#selectRegional").attr("name")] = $("#selectRegional").select2("val");
+        }
+        if ($("#selectCampaign").select2("val")!='') {
+            formData[$("#selectCampaign").attr("name")] = $("#selectCampaign").select2("val");
+        }
+        if ($("#selectLevel").select2("val")!='') {
+            formData[$("#selectLevel").attr("name")] = $("#selectLevel").select2("val");
+        }
+        $.ajax({
+            type: "POST",
+            url: base_path+'nossablastwa/updateCampaign',
+            data: formData,
+            dataType: 'json',
+            success: function () {
+                datatable.ajax.reload( null, false );
+                modalEditCampaignShow(false);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log('ERR updateCampaign');
+                ajaxErrorResponse(xhr, ajaxOptions, thrownError);
+            }
+        });
+        return false;
+    });    
+}
+
+if (!!document.getElementById('addContactForm')) {
+    document.getElementById('addContactForm').addEventListener("submit", function(e) {
+        e.preventDefault(); // before the code
+        let formData = Object.fromEntries(new FormData(this));
+        formData[$("#selectTag").attr("name")] = $("#selectTag").select2("val");
+        $.ajax({
+            type: "POST",
+            url: base_path+'nossablastwa/addContact',
+            data: formData,
+            dataType: 'json',
+            success: function () {
+                datatable.ajax.reload( null, false );
+                modalAddContactShow(false);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log('ERR addContact');
+                ajaxErrorResponse(xhr, ajaxOptions, thrownError);
+            }
+        });
+        return false;
+    });    
+}
 
 function getListCampaign() {
     $.ajax({
