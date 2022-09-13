@@ -5,7 +5,7 @@ $.ajaxSetup({
     }
 });
 let cacheWitel=[];
-let cacheRegional=['01','02','03','04','05','06','07'];
+let cacheRegional=['REG-1','REG-2','REG-3','REG-4','REG-5','REG-6','REG-7'];
 let cacheCampaign=[];
 
 generateDataLokerContact();
