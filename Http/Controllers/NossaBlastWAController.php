@@ -19,10 +19,10 @@ class NossaBlastWAController extends Controller
     {
         return view('nossablastwa::AdminContact');
     }
-    public function APINossaTriggered(object $payload, DictionaryService $Dictionary = new DictionaryService)
+    public function APINossaTriggered(object $payload)
     {
         $searchParams = ' AND ' . $this->jsonbSearchObjectConverter('level', $payload->level) . ' AND ' . $this->jsonbSearchObjectConverter('campaign', $payload->campaign) . ' AND (' . $this->jsonbSearchObjectConverter('tk_region', $payload->tk_region) . ' OR ' . $this->jsonbSearchObjectConverter('tk_subregion', $payload->tk_subregion) . ')';
-
+        $Dictionary = new DictionaryService;
         $sendTarget = $Dictionary->retrieveValue('NossaBlastWA', TYPE_PHONE_NUMBER, $searchParams);
         $campaignBlast = $Dictionary->retrieveExtra('NossaBlastWA', 'Campaign Blast', $payload->campaign);
         if (is_null($campaignBlast) || !property_exists($campaignBlast, 'send_api_id')) {
