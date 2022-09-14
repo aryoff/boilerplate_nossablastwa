@@ -7,14 +7,10 @@ use Modules\IntegratedAPI\Services\IntegratedAPIService;
 
 class NossaBlastWAService
 {
-    public function instance()
-    {
-        return $this;
-    }
-    public function APINossaTriggered(object $payload, DictionaryService $Dictionary, IntegratedAPIService $IntegratedAPI)
+    public function APINossaTriggered(object $payload)
     {
         $searchParams = ' AND ' . $this->jsonbSearchObjectConverter('level', $payload->level) . ' AND ' . $this->jsonbSearchObjectConverter('campaign', $payload->campaign) . ' AND (' . $this->jsonbSearchObjectConverter('tk_region', $payload->tk_region) . ' OR ' . $this->jsonbSearchObjectConverter('tk_subregion', $payload->tk_subregion) . ')';
-
+        $Dictionary = new DictionaryService;
         $sendTarget = $Dictionary->retrieveValue('NossaBlastWA', TYPE_PHONE_NUMBER, $searchParams);
         $campaignBlast = $Dictionary->retrieveExtra('NossaBlastWA', 'Campaign Blast', $payload->campaign);
         if (is_null($campaignBlast) || !property_exists($campaignBlast, 'send_api_id')) {
@@ -41,6 +37,7 @@ class NossaBlastWAService
             $data->TEMPLATE_DATA[] = $this->buildObject('12', $payload->keluhan ?? 'null');
             $data->TEMPLATE_DATA[] = $this->buildObject('13', $payload->update ?? 'null');
             $data->PHONE = $value->value;
+            $IntegratedAPI = new IntegratedAPIService;
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
             Log::info(json_encode($result)); //HACK
             //TODO result send nya simpan di database
