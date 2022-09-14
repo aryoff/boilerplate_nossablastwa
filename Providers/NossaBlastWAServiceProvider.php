@@ -4,6 +4,7 @@ namespace Modules\NossaBlastWA\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+define('TYPE_PHONE_NUMBER', 'Phone Number');
 class NossaBlastWAServiceProvider extends ServiceProvider
 {
     /**
