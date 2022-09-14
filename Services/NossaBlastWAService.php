@@ -3,17 +3,15 @@
 namespace Modules\NossaBlastWA\Services;
 
 use App\Services\DictionaryService;
-use Modules\IntegratedAPI\Traits\IntegratedAPITrait;
+use Modules\IntegratedAPI\Services\IntegratedAPIService;
 
 class NossaBlastWAService
 {
-    use IntegratedAPITrait;
-
     public function instance()
     {
         return $this;
     }
-    public function APINossaTriggered(object $payload, DictionaryService $Dictionary)
+    public function APINossaTriggered(object $payload, DictionaryService $Dictionary, IntegratedAPIService $IntegratedAPI)
     {
         $searchParams = ' AND ' . $this->jsonbSearchObjectConverter('level', $payload->level) . ' AND ' . $this->jsonbSearchObjectConverter('campaign', $payload->campaign) . ' AND (' . $this->jsonbSearchObjectConverter('tk_region', $payload->tk_region) . ' OR ' . $this->jsonbSearchObjectConverter('tk_subregion', $payload->tk_subregion) . ')';
 
@@ -43,7 +41,7 @@ class NossaBlastWAService
             $data->TEMPLATE_DATA[] = $this->buildObject('12', $payload->keluhan ?? 'null');
             $data->TEMPLATE_DATA[] = $this->buildObject('13', $payload->update ?? 'null');
             $data->PHONE = $value->value;
-            $result = IntegratedAPITrait::send($campaignBlast->send_api_id, $data);
+            $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
             Log::info(json_encode($result)); //HACK
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
