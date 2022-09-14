@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Traits\DictionaryTrait;
 use Illuminate\Support\Facades\Log;
-use Modules\IntegratedAPI\Http\Controllers\IntegratedAPIController;
+use Modules\IntegratedAPI\Traits\IntegratedAPITrait;
 
 define('TYPE_PHONE_NUMBER', 'Phone Number');
 define('VALIDATE_NULLABLE_OR_ARRAY', 'nullable|array');
 class NossaBlastWAController extends Controller
 {
-    use DictionaryTrait;
+    use DictionaryTrait, IntegratedAPITrait;
 
     public function AdminContact()
     {
@@ -29,7 +29,6 @@ class NossaBlastWAController extends Controller
             Log::error('No Send API ID Found for campaign ' . $payload->campaign);
             return false;
         }
-        $IntegratedAPI = new IntegratedAPIController;
         foreach ($sendTarget as $value) {
             $extraSendTarget = json_decode($value->extra);
             $date = new DateTime('now');
@@ -50,7 +49,7 @@ class NossaBlastWAController extends Controller
             $data->TEMPLATE_DATA[] = $this->buildObject('12', $payload->keluhan ?? 'null');
             $data->TEMPLATE_DATA[] = $this->buildObject('13', $payload->update ?? 'null');
             $data->PHONE = $value->value;
-            $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
+            $result = IntegratedAPITrait::send($campaignBlast->send_api_id, $data);
             Log::info(json_encode($result)); //HACK
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
