@@ -3,23 +3,17 @@
 namespace Modules\NossaBlastWA\Http\Controllers;
 
 use DateTime;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use App\Http\Controllers\DictionaryController;
+use App\Traits\DictionaryTrait;
 use Illuminate\Support\Facades\Log;
 use Modules\IntegratedAPI\Http\Controllers\IntegratedAPIController;
 
+define('TYPE_PHONE_NUMBER', 'Phone Number');
+define('VALIDATE_NULLABLE_OR_ARRAY', 'nullable|array');
 class NossaBlastWAController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
-    {
-        return view('nossablastwa::index');
-    }
+    use DictionaryTrait;
 
     public function AdminContact()
     {
@@ -29,9 +23,8 @@ class NossaBlastWAController extends Controller
     {
         $searchParams = ' AND ' . $this->jsonbSearchObjectConverter('level', $payload->level) . ' AND ' . $this->jsonbSearchObjectConverter('campaign', $payload->campaign) . ' AND (' . $this->jsonbSearchObjectConverter('tk_region', $payload->tk_region) . ' OR ' . $this->jsonbSearchObjectConverter('tk_subregion', $payload->tk_subregion) . ')';
 
-        $Dictionary = new DictionaryController;
-        $sendTarget = $Dictionary->retrieveValue('NossaBlastWA', 'Phone Number', $searchParams);
-        $campaignBlast = $Dictionary->retrieveExtra('NossaBlastWA', 'Campaign Blast', $payload->campaign);
+        $sendTarget = DictionaryTrait::retrieveValue('NossaBlastWA', TYPE_PHONE_NUMBER, $searchParams);
+        $campaignBlast = DictionaryTrait::retrieveExtra('NossaBlastWA', 'Campaign Blast', $payload->campaign);
         if (is_null($campaignBlast) || !property_exists($campaignBlast, 'send_api_id')) {
             Log::error('No Send API ID Found for campaign ' . $payload->campaign);
             return false;
@@ -62,8 +55,8 @@ class NossaBlastWAController extends Controller
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
-        /*        if ($Dictionary->retrieveExtra('NossaBlastWA','Witel Telkom',$payload->tk_subregion)!=null) { //collect data subregion
-            $Dictionary->insert('NossaBlastWA','Witel Telkom',$payload->tk_subregion);
+        /*        if (DictionaryTrait::retrieveExtra('NossaBlastWA','Witel Telkom',$payload->tk_subregion)!=null) { //collect data subregion
+            DictionaryTrait::insert('NossaBlastWA','Witel Telkom',$payload->tk_subregion);
         }*/
     }
     private function jsonbSearchObjectConverter(string $key, $value): string
@@ -80,11 +73,10 @@ class NossaBlastWAController extends Controller
         $response->{$key} = $value;
         return $response;
     }
-    public function listDataContact(Request $request)
+    public function listDataContact()
     {
         $response = new \stdClass;
-        $Dictionary = new DictionaryController;
-        $container = $Dictionary->retrieveValue('NossaBlastWA', 'Phone Number');
+        $container = DictionaryTrait::retrieveValue('NossaBlastWA', TYPE_PHONE_NUMBER);
         $response->data = array();
         foreach ($container as $element) {
             $tempValue = json_decode($element->extra);
@@ -107,8 +99,7 @@ class NossaBlastWAController extends Controller
     }
     public function listDataCampaign()
     {
-        $Dictionary = new DictionaryController;
-        $container = $Dictionary->retrieveValue('NossaBlastWA', 'Campaign Blast');
+        $container = DictionaryTrait::retrieveValue('NossaBlastWA', 'Campaign Blast');
         $response = array();
         foreach ($container as $element) {
             $response[] = $element->value;
@@ -117,8 +108,7 @@ class NossaBlastWAController extends Controller
     }
     public function listDataWitel()
     {
-        $Dictionary = new DictionaryController;
-        $container = $Dictionary->retrieveValue('NossaBlastWA', 'Witel Telkom');
+        $container = DictionaryTrait::retrieveValue('NossaBlastWA', 'Witel Telkom');
         $response = array();
         foreach ($container as $element) {
             $response[] = $element->value;
@@ -132,19 +122,17 @@ class NossaBlastWAController extends Controller
             'jabatan' => 'required',
             'contact_number' => 'required',
         ]);
-        $Dictionary = new DictionaryController;
         $extra = new \stdClass;
         $extra->nama = $data['nama'];
         $extra->jabatan = $data['jabatan'];
-        return response()->json($Dictionary->insert('NossaBlastWA', 'Phone Number', $data['contact_number'], $extra), 200);
+        return response()->json(DictionaryTrait::insert('NossaBlastWA', TYPE_PHONE_NUMBER, $data['contact_number'], $extra), 200);
     }
     public function deleteContact(Request $request)
     {
         $data = $request->validate([
             'id' => 'required',
         ]);
-        $Dictionary = new DictionaryController;
-        return response()->json($Dictionary->deleteByValue('NossaBlastWA', 'Phone Number', $data['id']), 200);
+        return response()->json(DictionaryTrait::deleteByValue('NossaBlastWA', TYPE_PHONE_NUMBER, $data['id']), 200);
     }
     public function updateCampaign(Request $request)
     {
@@ -153,15 +141,14 @@ class NossaBlastWAController extends Controller
             'nama' => 'required',
             'jabatan' => 'nullable',
             'contact_number' => 'required',
-            'tk_subregion' => 'nullable|array',
-            'tk_region' => 'nullable|array',
-            'campaign' => 'nullable|array',
-            'level' => 'nullable|array'
+            'tk_subregion' => VALIDATE_NULLABLE_OR_ARRAY,
+            'tk_region' => VALIDATE_NULLABLE_OR_ARRAY,
+            'campaign' => VALIDATE_NULLABLE_OR_ARRAY,
+            'level' => VALIDATE_NULLABLE_OR_ARRAY
         ]);
-        $Dictionary = new DictionaryController;
         $newValue = false;
         if ($data['id'] != $data['contact_number']) { //Ganti nomor
-            $newValue = $Dictionary->updateValue('NossaBlastWA', 'Phone Number', $data['id'], $data['contact_number']);
+            $newValue = DictionaryTrait::updateValue('NossaBlastWA', TYPE_PHONE_NUMBER, $data['id'], $data['contact_number']);
         }
         $extra = new \stdClass;
         foreach ($data as $keyData => $valueData) {
@@ -170,9 +157,9 @@ class NossaBlastWAController extends Controller
             }
         }
         if ($newValue) {
-            return response()->json($Dictionary->updateExtra('NossaBlastWA', 'Phone Number', $data['contact_number'], $extra), 200);
+            return response()->json(DictionaryTrait::updateExtra('NossaBlastWA', TYPE_PHONE_NUMBER, $data['contact_number'], $extra), 200);
         } else {
-            return response()->json($Dictionary->updateExtra('NossaBlastWA', 'Phone Number', $data['id'], $extra), 200);
+            return response()->json(DictionaryTrait::updateExtra('NossaBlastWA', TYPE_PHONE_NUMBER, $data['id'], $extra), 200);
         }
     }
 }
