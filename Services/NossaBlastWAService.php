@@ -7,6 +7,8 @@ use App\Services\DictionaryService;
 use Modules\IntegratedAPI\Services\IntegratedAPIService;
 use Illuminate\Support\Facades\Log;
 
+use function PHPUnit\Framework\isNull;
+
 class NossaBlastWAService
 {
     public function APINossaTriggered(object $payload)
@@ -45,7 +47,7 @@ class NossaBlastWAService
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
-        if ($Dictionary->retrieveExtra('NossaBlastWA', 'Witel Telkom', $payload->tk_subregion) != null) { //collect data subregion
+        if (isNull($Dictionary->retrieveExtra('NossaBlastWA', 'Witel Telkom', $payload->tk_subregion))) { //collect data subregion
             $Dictionary->insert('NossaBlastWA', 'Witel Telkom', $payload->tk_subregion);
         }
     }
