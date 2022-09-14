@@ -159,22 +159,6 @@ function getListWitel() {
         }
     });
 }
-function fillSelectValue(id, variable) {
-    console.log(variable)
-    if (variable != null) {
-        if (Array.isArray(variable)) {
-            variable.forEach(element => {
-                if ($('#'+id).find("option[value='" + element + "']").length) {
-                    $('#'+id).val(element).trigger('change');
-                }
-            });    
-        } else {
-            if ($('#'+id).find("option[value='" + variable + "']").length) {
-                $('#'+id).val(variable).trigger('change');
-            }
-        }
-    }
-}
 function concatenator(data) {
     if (Array.isArray(data)) {
         let arrTemp = '';
@@ -272,21 +256,21 @@ function generateDataLokerContact() {
             let newOption = new Option(element, element, false, false);
             $('#selectWitel').append(newOption);
         });
-        fillSelectValue('selectWitel',tk_subregion);
+        $('#selectWitel').val(tk_subregion).trigger('change');
         document.getElementById('selectRegional').innerHTML = '';
         cacheRegional.forEach(element=>{
             let newOption = new Option(element, element, false, false);
             $('#selectRegional').append(newOption);
         });
-        fillSelectValue('selectRegional',tk_region);
+        $('#selectRegional').val(tk_region).trigger('change');
         document.getElementById('selectCampaign').innerHTML = '';
         cacheCampaign.forEach(element=>{
             let newOption = new Option(element, element, false, false);
             $('#selectCampaign').append(newOption);
         });
-        fillSelectValue('selectCampaign',campaign);
+        $('#selectCampaign').val(campaign).trigger('change');
         $('#selectLevel').val(null).trigger('change');
-        fillSelectValue('selectLevel',level);
+        $('#selectLevel').val(level).trigger('change');
         document.getElementById('nama').value = data.nama;
         document.getElementById('jabatan').value = data.jabatan;
         document.getElementById('contact_number').value = data.phone_number;
