@@ -19,7 +19,7 @@ class NossaBlastWAController extends Controller
     {
         return view('nossablastwa::AdminContact');
     }
-    public function APINossaTriggered(object $payload, DictionaryService $Dictionary)
+    public function APINossaTriggered(object $payload, DictionaryService $Dictionary = new DictionaryService)
     {
         $searchParams = ' AND ' . $this->jsonbSearchObjectConverter('level', $payload->level) . ' AND ' . $this->jsonbSearchObjectConverter('campaign', $payload->campaign) . ' AND (' . $this->jsonbSearchObjectConverter('tk_region', $payload->tk_region) . ' OR ' . $this->jsonbSearchObjectConverter('tk_subregion', $payload->tk_subregion) . ')';
 
