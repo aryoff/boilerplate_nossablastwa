@@ -47,9 +47,9 @@ class NossaBlastWAService
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
-        if (isNull($Dictionary->retrieveExtra('NossaBlastWA', 'Witel Telkom', $payload->tk_subregion))) { //collect data subregion
-            $Dictionary->insert('NossaBlastWA', 'Witel Telkom', $payload->tk_subregion);
-        }
+        // if (isNull($Dictionary->retrieveExtra('NossaBlastWA', 'Witel Telkom', $payload->tk_subregion))) { //collect data subregion
+        //     $Dictionary->insert('NossaBlastWA', 'Witel Telkom', $payload->tk_subregion);
+        // }
     }
     private function jsonbSearchObjectConverter(string $key, $value): string
     {
