@@ -160,6 +160,7 @@ function getListWitel() {
     });
 }
 function fillSelectValue(id, variable) {
+    console.log(variable)
     if (variable != null) {
         if (Array.isArray(variable)) {
             variable.forEach(element => {

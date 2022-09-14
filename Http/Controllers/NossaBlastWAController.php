@@ -5,13 +5,10 @@ namespace Modules\NossaBlastWA\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Services\DictionaryService;
-use Modules\IntegratedAPI\Traits\IntegratedAPITrait;
 
 define('VALIDATE_NULLABLE_OR_ARRAY', 'nullable|array');
 class NossaBlastWAController extends Controller
 {
-    use IntegratedAPITrait;
-
     public function AdminContact()
     {
         return view('nossablastwa::AdminContact');
