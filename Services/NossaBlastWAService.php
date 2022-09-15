@@ -43,7 +43,7 @@ class NossaBlastWAService
             $data->PHONE = $value->value;
             $IntegratedAPI = new IntegratedAPIService;
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
-            // Log::info(json_encode($result)); //HACK
+            Log::info(json_encode($result)); //HACK
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
