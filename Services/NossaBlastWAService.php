@@ -21,6 +21,7 @@ class NossaBlastWAService
             Log::error('No Send API ID Found for campaign ' . $payload->campaign);
             return false;
         }
+        $result = null;
         foreach ($sendTarget as $value) {
             $extraSendTarget = json_decode($value->extra);
             $date = new DateTime('now');
@@ -43,10 +44,11 @@ class NossaBlastWAService
             $data->PHONE = $value->value;
             $IntegratedAPI = new IntegratedAPIService;
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
-            Log::info(json_encode($result)); //HACK
+            // Log::info(json_encode($result)); //HACK
             //TODO result send nya simpan di database
             //TODO result send nya pakai callback ? mekanisme ???
         }
+        return $result;
     }
     private function jsonbSearchObjectConverter(string $key, $value): string
     {
