@@ -40,7 +40,7 @@ class NossaBlastWAService
             $data->TEMPLATE_DATA[] = $this->buildObject('10', $payload->reportdate ?? 'null');
             $data->TEMPLATE_DATA[] = $this->buildObject('11', $payload->serviceno ?? 'null');
             $data->TEMPLATE_DATA[] = $this->buildObject('12', $payload->keluhan ?? 'null');
-            $data->TEMPLATE_DATA[] = $this->buildObject('13', $payload->update ?? 'null');
+            $data->TEMPLATE_DATA[] = $this->buildObject('13', $payload->update ?? '_Belum ada update tindak lanjut_');
             $data->PHONE = $value->value;
             $IntegratedAPI = new IntegratedAPIService;
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
