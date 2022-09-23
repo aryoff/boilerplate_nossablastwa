@@ -70,7 +70,14 @@ class NossaBlastWAService
     }
     public function APIWACallback(object $payload)
     {
+        $Dictionary = new DictionaryService;
+        $apiWALastHit = $Dictionary->retrieveValue('NossaBlastWA', 'APIWACallbackLastHit');
         $date = new DateTime('now');
+        if (empty($apiWALastHit)) {
+            $Dictionary->insert('NossaBlastWA', 'APIWACallbackLastHit', $date->format(DATETIME_FORMAT));
+        } else {
+            $Dictionary->updateValue('NossaBlastWA', 'APIWACallbackLastHit', $apiWALastHit[0]->value, $date->format(DATETIME_FORMAT));
+        }
         return DB::update("UPDATE nossablastwa_logs SET status=nossablastwa_logs.status||jsonb_build_object(:msg,:msgtime) WHERE session_id=:session_id", ['session_id' => $payload->session_id, 'msg' => $payload->msg, 'msgtime' => $date->format(DATETIME_FORMAT)]);
     }
     private function jsonbSearchObjectConverter(string $key, $value): string
