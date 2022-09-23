@@ -16,13 +16,12 @@ class NossaBlastWAService
         $searchParams = ' AND ' . $this->jsonbSearchObjectConverter('level', $payload->level) . ' AND ' . $this->jsonbSearchObjectConverter('campaign', $payload->campaign) . ' AND (' . $this->jsonbSearchObjectConverter('tk_region', $payload->tk_region) . ' OR ' . $this->jsonbSearchObjectConverter('tk_subregion', $payload->tk_subregion) . ')';
         $Dictionary = new DictionaryService;
         $nossaLastHit = $Dictionary->retrieveValue('NossaBlastWA', 'NossaLastHit');
-        Log::info(json_encode($nossaLastHit));
-        // $date = new DateTime('now');
-        // if (empty($nossaLastHit)) {
-        //     $Dictionary->insert('NossaBlastWA', 'NossaLastHit', $date->format(DATETIME_FORMAT));
-        // } else {
-        //     $Dictionary->updateValue('NossaBlastWA', 'NossaLastHit', $date->format(DATETIME_FORMAT), $nossaLastHit[0]->value);
-        // }
+        $date = new DateTime('now');
+        if (empty($nossaLastHit)) {
+            $Dictionary->insert('NossaBlastWA', 'NossaLastHit', $date->format(DATETIME_FORMAT));
+        } else {
+            $Dictionary->updateValue('NossaBlastWA', 'NossaLastHit', $nossaLastHit[0]->value, $date->format(DATETIME_FORMAT));
+        }
         $sendTarget = $Dictionary->retrieveValue('NossaBlastWA', TYPE_PHONE_NUMBER, $searchParams);
         $campaignBlast = $Dictionary->retrieveExtra('NossaBlastWA', 'Campaign Blast', $payload->campaign);
         if (is_null($campaignBlast) || !property_exists($campaignBlast, 'send_api_id')) {
