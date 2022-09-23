@@ -7,14 +7,21 @@ use App\Services\DictionaryService;
 use Modules\IntegratedAPI\Services\IntegratedAPIService;
 use Illuminate\Support\Facades\Log;
 
-use function PHPUnit\Framework\isNull;
-
+define('DATETIME_FORMAT', 'Y-m-d H:i:s');
 class NossaBlastWAService
 {
     public function APINossaTriggered(object $payload)
     {
+
         $searchParams = ' AND ' . $this->jsonbSearchObjectConverter('level', $payload->level) . ' AND ' . $this->jsonbSearchObjectConverter('campaign', $payload->campaign) . ' AND (' . $this->jsonbSearchObjectConverter('tk_region', $payload->tk_region) . ' OR ' . $this->jsonbSearchObjectConverter('tk_subregion', $payload->tk_subregion) . ')';
         $Dictionary = new DictionaryService;
+        $nossaLastHit = $Dictionary->retrieveValue('NossaBlastWA', 'NossaLastHit');
+        $date = new DateTime('now');
+        if (empty($nossaLastHit)) {
+            $Dictionary->insert('NossaBlastWA', 'NossaLastHit', $date->format(DATETIME_FORMAT));
+        } else {
+            $Dictionary->updateValue('NossaBlastWA', 'NossaLastHit', $date->format(DATETIME_FORMAT), $nossaLastHit[0]->value);
+        }
         $sendTarget = $Dictionary->retrieveValue('NossaBlastWA', TYPE_PHONE_NUMBER, $searchParams);
         $campaignBlast = $Dictionary->retrieveExtra('NossaBlastWA', 'Campaign Blast', $payload->campaign);
         if (is_null($campaignBlast) || !property_exists($campaignBlast, 'send_api_id')) {
@@ -30,7 +37,7 @@ class NossaBlastWAService
             $data->TEMPLATE_DATA = array();
             $data->TEMPLATE_DATA[] = $this->buildObject('1', 'L' . $payload->level ?? '');
             $data->TEMPLATE_DATA[] = $this->buildObject('2', $extraSendTarget->jabatan ?? '');
-            $data->TEMPLATE_DATA[] = $this->buildObject('3', $date->format('Y-m-d H:i:s'));
+            $data->TEMPLATE_DATA[] = $this->buildObject('3', $date->format(DATETIME_FORMAT));
             $data->TEMPLATE_DATA[] = $this->buildObject('4', $payload->customer_type ?? 'null');
             $data->TEMPLATE_DATA[] = $this->buildObject('5', $payload->incident ?? 'null');
             $data->TEMPLATE_DATA[] = $this->buildObject('6', $payload->tk_subregion);
