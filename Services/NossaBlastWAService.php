@@ -52,7 +52,14 @@ class NossaBlastWAService
             $data->PHONE = $value->value;
             $IntegratedAPI = new IntegratedAPIService;
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
-            $this->saveAPIResult($result, $payload, $value->value);
+            if (is_null($result)) {
+                $tempResult = new \stdClass;
+                $tempResult->session_id = null;
+                $tempResult->msg = 'api failed';
+                $this->saveAPIResult($tempResult, $payload, $value->value);
+            } else {
+                $this->saveAPIResult($result, $payload, $value->value);
+            }
         }
         return $result;
     }
