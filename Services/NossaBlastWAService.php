@@ -6,6 +6,7 @@ use DateTime;
 use App\Services\DictionaryService;
 use Modules\IntegratedAPI\Services\IntegratedAPIService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 define('DATETIME_FORMAT', 'Y-m-d H:i:s');
 class NossaBlastWAService
@@ -32,7 +33,7 @@ class NossaBlastWAService
         foreach ($sendTarget as $value) {
             $extraSendTarget = json_decode($value->extra);
             $date = new DateTime('now');
-            $data =  new \stdClass;
+            $data = new \stdClass;
             $data->TICKET_ID = $payload->incident ?? '';
             $data->TEMPLATE_DATA = array();
             $data->TEMPLATE_DATA[] = $this->buildObject('1', 'L' . $payload->level ?? '');
@@ -51,11 +52,19 @@ class NossaBlastWAService
             $data->PHONE = $value->value;
             $IntegratedAPI = new IntegratedAPIService;
             $result = $IntegratedAPI->send($campaignBlast->send_api_id, $data);
-            // Log::info(json_encode($result)); //HACK
-            //TODO result send nya simpan di database
-            //TODO result send nya pakai callback ? mekanisme ???
+            $this->saveAPIResult($result, $payload, $value->value);
         }
         return $result;
+    }
+    private function saveAPIResult(object $result, object $payload, string $phone): bool
+    {
+        $date = new DateTime('now');
+        return DB::insert("INSERT INTO nossablastwa_logs (session_id,status,data) VALUES (:session_id,jsonb_build_object(:msg,:msgtime),jsonb_build_object('tk_subregion',:tk_subregion,'tk_region',:tk_region,'phone_number',:phone_number));", ['session_id' => $result->session_id, 'tk_subregion' => $payload->tk_subregion, 'tk_region' => $payload->tk_region, 'phone_number' => $phone, 'msg' => $result->msg, 'msgtime' => $date->format(DATETIME_FORMAT)]);
+    }
+    public function APIWACallback(object $payload)
+    {
+        $date = new DateTime('now');
+        return DB::update("UPDATE nossablastwa_logs SET status=nossablastwa_logs.status||jsonb_build_object(:msg,:msgtime) WHERE session_id=:session_id", ['session_id' => $payload->session_id, 'msg' => $payload->msg, 'msgtime' => $date->format(DATETIME_FORMAT)]);
     }
     private function jsonbSearchObjectConverter(string $key, $value): string
     {
