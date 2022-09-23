@@ -14,7 +14,8 @@ class CreateNossablastwaLogs extends Migration
     public function up()
     {
         Schema::create('nossablastwa_logs', function (Blueprint $table) {
-            $table->string('session_id');
+            $table->id();
+            $table->string('session_id')->nullable();
             if (env('DB_CONNECTION', false) == 'pgsql') {
                 $table->jsonb('status')->default('{}');
                 $table->jsonb('data')->default('{}');
@@ -24,7 +25,7 @@ class CreateNossablastwaLogs extends Migration
             }
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->primary('session_id');
+            $table->unique('session_id');
         });
         if (env('DB_CONNECTION', false) == 'pgsql') {
             DB::statement('CREATE INDEX nossablastwa_logs_datagin ON nossablastwa_logs USING gin ((data))');
