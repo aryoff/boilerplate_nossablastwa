@@ -66,7 +66,7 @@ class NossaBlastWAService
     private function saveAPIResult(object $result, object $payload, string $phone): bool
     {
         $date = new DateTime('now');
-        return DB::insert("INSERT INTO nossablastwa_logs (session_id,status,data) VALUES (:session_id,jsonb_build_object(:msg,:msgtime),jsonb_build_object('tk_subregion',:tk_subregion,'tk_region',:tk_region,'phone_number',:phone_number,'campaign',:campaign));", ['session_id' => $result->session_id, 'tk_subregion' => $payload->tk_subregion, 'tk_region' => $payload->tk_region, 'phone_number' => $phone, 'campaign' => $payload->campaign, 'msg' => $result->msg, 'msgtime' => $date->format(DATETIME_FORMAT)]);
+        return DB::insert("INSERT INTO nossablastwa_logs (session_id,status,data) VALUES (:session_id,jsonb_build_object(:msg,:msgtime),jsonb_build_object('tk_subregion',:tk_subregion,'tk_region',:tk_region,'phone_number',:phone_number,'campaign',:campaign,'incident',:incident));", ['session_id' => $result->session_id, 'tk_subregion' => $payload->tk_subregion, 'tk_region' => $payload->tk_region, 'phone_number' => $phone, 'campaign' => $payload->campaign, 'incident' => $payload->incident, 'msg' => $result->msg, 'msgtime' => $date->format(DATETIME_FORMAT)]);
     }
     public function APIWACallback(object $payload)
     {
