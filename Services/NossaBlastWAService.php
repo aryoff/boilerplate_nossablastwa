@@ -57,6 +57,10 @@ class NossaBlastWAService
                 $tempResult->msg = 'api failed';
                 $this->saveAPIResult($tempResult, $payload, $value->value);
             } else {
+                //HACK
+                if (!property_exists($result, 'session_id')) {
+                    Log::info('[NossaBlastWA] APINossaTriggered ' . json_encode($result));
+                }
                 $this->saveAPIResult($result, $payload, $value->value);
             }
         }
