@@ -229,6 +229,10 @@ function generateDataLokerContact() {
                 "type": "POST",
             },
             "columns": columnData,
+            "lengthMenu": [
+                [10, 25, 50, 100, 1000, -1],
+                [10, 25, 50, 100, 1000, "All"]
+            ],
             "initComplete": function () {
                 // Apply the search
                 this.api().columns().every(function () {
