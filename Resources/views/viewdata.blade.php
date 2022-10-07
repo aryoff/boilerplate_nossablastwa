@@ -175,9 +175,7 @@
                     header: true,
                     footer: true
                 },
-                "buttons": [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
+                "buttons": ['copy', 'csv', 'excel', 'pdf', 'print'],
                 "order": [[2, 'desc']],
                 "initComplete": function (settings, json) {
                     $("#table_report").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
@@ -200,6 +198,7 @@
                                 }
                             });
                     });
+                    reportTable.buttons().container().addClass('float-right').appendTo( '#table_report_length' );
                 },
                 "lengthMenu": [
                     [10, 25, 50, 100, 1000, -1],
