@@ -198,7 +198,9 @@
                                 }
                             });
                     });
-                    reportTable.buttons().container().addClass('float-right').appendTo( '#table_report_length' );
+                    $('#table_report_length').parent().removeClass('col-md-6').addClass('col-md-4');
+                    reportTable.buttons().container().addClass('col-sm-12 col-md-4').insertBefore( $('#table_report_filter').parent() );
+                    $('#table_report_filter').parent().removeClass('col-md-6').addClass('col-md-4');
                 },
                 "lengthMenu": [
                     [10, 25, 50, 100, 1000, -1],
