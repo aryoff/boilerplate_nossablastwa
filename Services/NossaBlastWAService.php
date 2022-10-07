@@ -55,21 +55,21 @@ class NossaBlastWAService
                 $tempResult = new \stdClass;
                 $tempResult->session_id = null;
                 $tempResult->msg = 'api failed';
-                $this->saveAPIResult($tempResult, $payload, $value->value);
+                $this->saveAPIResult($tempResult, $payload, $value->value, $extraSendTarget->nama);
             } else {
                 //HACK
                 if (!property_exists($result, 'session_id')) {
                     Log::info('[NossaBlastWA] APINossaTriggered ' . json_encode($result));
                 }
-                $this->saveAPIResult($result, $payload, $value->value);
+                $this->saveAPIResult($result, $payload, $value->value, $extraSendTarget->nama);
             }
         }
         return $result;
     }
-    private function saveAPIResult(object $result, object $payload, string $phone): bool
+    private function saveAPIResult(object $result, object $payload, string $phone, string $namaPenerima): bool
     {
         $date = new DateTime('now');
-        return DB::insert("INSERT INTO nossablastwa_logs (session_id,status,data) VALUES (:session_id,jsonb_build_object(:msg,:msgtime),jsonb_build_object('tk_subregion',:tk_subregion,'tk_region',:tk_region,'phone_number',:phone_number,'campaign',:campaign,'level',:lvl,'incident',:incident));", ['session_id' => $result->session_id, 'tk_subregion' => $payload->tk_subregion, 'tk_region' => $payload->tk_region, 'phone_number' => $phone, 'campaign' => $payload->campaign, 'lvl' => $payload->level, 'incident' => $payload->incident, 'msg' => $result->msg, 'msgtime' => $date->format(DATETIME_FORMAT)]);
+        return DB::insert("INSERT INTO nossablastwa_logs (session_id,status,data) VALUES (:session_id,jsonb_build_object(:msg,:msgtime),jsonb_build_object('tk_subregion',:tk_subregion,'tk_region',:tk_region,'phone_number',:phone_number,'campaign',:campaign,'level',:lvl,'incident',:incident,'keluhan',:keluhan,'lapul',:lapul,'tk_urgensi',:tk_urgensi,'penerima',:penerima));", ['session_id' => $result->session_id, 'tk_subregion' => $payload->tk_subregion, 'tk_region' => $payload->tk_region, 'phone_number' => $phone, 'campaign' => $payload->campaign, 'lvl' => $payload->level, 'incident' => $payload->incident, 'keluhan' => $payload->keluhan, 'lapul' => $payload->lapul ?? '0', 'tk_urgensi' => $payload->tk_urgensi, 'penerima' => $namaPenerima, 'msg' => $result->msg, 'msgtime' => $date->format(DATETIME_FORMAT)]);
     }
     public function APIWACallback(object $payload)
     {
