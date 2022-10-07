@@ -140,4 +140,10 @@
 
 @section('module_js')
     <script src="{{ mix('js/nossablastwa.js') }}"></script>
+    <script>
+        generateDataLokerContact();
+        getListCampaign();
+        getListWitel();
+
+    </script>
 @endsection

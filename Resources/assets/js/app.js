@@ -8,32 +8,9 @@ let cacheWitel=[];
 let cacheRegional=['REG-1','REG-2','REG-3','REG-4','REG-5','REG-6','REG-7'];
 let cacheCampaign=[];
 
-generateDataLokerContact();
-getListCampaign();
-getListWitel();
 
 $('select').select2({
     theme: 'bootstrap4',
-});
-
-$('#selectWitel').select2({
-    placeholder: "Pilih Witel",
-    allowClear: true
-});
-
-$('#selectRegional').select2({
-    placeholder: "Pilih Regional",
-    allowClear: true
-});
-
-$('#selectCampaign').select2({
-    placeholder: "Pilih Campaign Blast",
-    allowClear: true
-});
-
-$('#selectLevel').select2({
-    placeholder: 'Pilih Campaign Level',
-    allowClear: true
 });
 
 window.modalEditCampaignShow = function(flag) {
@@ -133,7 +110,7 @@ if (!!document.getElementById('addContactForm')) {
     });    
 }
 
-function getListCampaign() {
+window.getListCampaign = function () {
     $.ajax({
         url: base_path+'nossablastwa/listDataCampaign',
         type: "GET",
@@ -146,7 +123,7 @@ function getListCampaign() {
         }
     });
 }
-function getListWitel() {
+window.getListWitel = function () {
     $.ajax({
         url: base_path+'nossablastwa/listDataWitel',
         type: "GET",
@@ -170,7 +147,50 @@ function concatenator(data) {
         return data;
     }
 }
-function generateDataLokerContact() {
+window.initWitel = function () {
+    $('#selectWitel').select2({
+        placeholder: "Pilih Witel",
+        allowClear: true
+    });    
+    document.getElementById('selectWitel').innerHTML = '';
+    cacheWitel.forEach(element=>{
+        let newOption = new Option(element, element, false, false);
+        $('#selectWitel').append(newOption);
+    });
+}
+window.initRegional = function () {
+    $('#selectRegional').select2({
+        placeholder: "Pilih Regional",
+        allowClear: true
+    });
+    
+    document.getElementById('selectRegional').innerHTML = '';
+    cacheRegional.forEach(element=>{
+        let newOption = new Option(element, element, false, false);
+        $('#selectRegional').append(newOption);
+    });
+}
+window.initCampaign = function () {
+    $('#selectCampaign').select2({
+        placeholder: "Pilih Campaign Blast",
+        allowClear: true
+    });
+    
+    document.getElementById('selectCampaign').innerHTML = '';
+    cacheCampaign.forEach(element=>{
+        let newOption = new Option(element, element, false, false);
+        $('#selectCampaign').append(newOption);
+    });
+}
+window.initLevel = function () {
+    $('#selectLevel').select2({
+        placeholder: 'Pilih Campaign Level',
+        allowClear: true
+    });
+    
+    $('#selectLevel').val(null).trigger('change');
+}
+window.generateDataLokerContact = function () {
     let columnData = [{
             "data": "nama",
             "title": "Nama"
@@ -255,25 +275,13 @@ function generateDataLokerContact() {
         let tk_region = data.tk_region;
         let campaign = data.campaign;
         let level = data.level;
-        document.getElementById('selectWitel').innerHTML = '';
-        cacheWitel.forEach(element=>{
-            let newOption = new Option(element, element, false, false);
-            $('#selectWitel').append(newOption);
-        });
+        initWitel();
         $('#selectWitel').val(tk_subregion).trigger('change');
-        document.getElementById('selectRegional').innerHTML = '';
-        cacheRegional.forEach(element=>{
-            let newOption = new Option(element, element, false, false);
-            $('#selectRegional').append(newOption);
-        });
+        initRegional();
         $('#selectRegional').val(tk_region).trigger('change');
-        document.getElementById('selectCampaign').innerHTML = '';
-        cacheCampaign.forEach(element=>{
-            let newOption = new Option(element, element, false, false);
-            $('#selectCampaign').append(newOption);
-        });
+        initCampaign();
         $('#selectCampaign').val(campaign).trigger('change');
-        $('#selectLevel').val(null).trigger('change');
+        initLevel();
         $('#selectLevel').val(level).trigger('change');
         document.getElementById('nama').value = data.nama;
         document.getElementById('jabatan').value = data.jabatan;

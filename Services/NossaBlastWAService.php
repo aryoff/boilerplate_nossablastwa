@@ -66,10 +66,79 @@ class NossaBlastWAService
         }
         return $result;
     }
+    private function generateSearchString($variable, string $template, string $replaceToken)
+    {
+        if ($variable != null && $variable != '') {
+            return str_replace($replaceToken, $variable, $template);
+        } else {
+            return '';
+        }
+    }
+    public function getLog(array $parameter): object
+    {
+        $response = new \stdClass;
+        $searchString = '1=1';
+        $globalSearchString = '';
+        foreach ($parameter['columns'] as $columnValue) {
+            switch ($columnValue['data']) {
+                case 'tgl_kirim':
+                    $searchString .= $this->generateSearchString($columnValue['search']['value'], "AND status @? '$.\"post success\"[*] ? (@ like_regex \".*[[data]].*\")' ", '[[data]]');
+                    $globalSearchString .= $this->generateSearchString($parameter['search']['value'], "status @? '$.\"post success\"[*] ? (@ like_regex \".*[[data]].*\")' OR ", '[[data]]');
+                    break;
+                case 'blast_status':
+                    switch ($columnValue['search']['value']) {
+                        case 'SENT':
+                            $searchString .= "AND jsonb_exists(status, 'post success')";
+                            $globalSearchString .= "jsonb_exists(status, 'post success') OR ";
+                            break;
+                        case 'FAILED':
+                            $searchString .= "AND jsonb_exists(status, 'api failed')";
+                            $globalSearchString .= "jsonb_exists(status, 'api failed') OR ";
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                    break;
+                default:
+                    $searchString .= $this->generateSearchString($columnValue['search']['value'], "AND data @? '$." . $columnValue['data'] . "[*] ? (@ like_regex \".*[[data]].*\")' ", '[[data]]');
+                    $globalSearchString .= $this->generateSearchString($parameter['search']['value'], "data @? '$." . $columnValue['data'] . "[*] ? (@ like_regex \".*[[data]].*\")' OR ", '[[data]]');
+                    break;
+            }
+        }
+        if ($globalSearchString != '') {
+            $searchString .= "AND(" . substr($globalSearchString, 0, strlen($globalSearchString) - 3) . ") ";
+        }
+        $orderBy = '';
+        foreach ($parameter['order'] as $order) {
+            switch ($parameter['columns'][$order['column']]['data']) {
+                case 'tgl_kirim':
+                    $orderBy .= "tgl_kirim " . $order['dir'] . ",";
+                    break;
+                case 'blast_status':
+                    $orderBy .= "blast_status " . $order['dir'] . ",";
+                    break;
+                default:
+                    $orderBy .= "data->>'" . $parameter['columns'][$order['column']]['data'] . "' " . $order['dir'] . ",";
+                    break;
+            }
+        }
+        if ($orderBy != '') {
+            $orderBy = substr($orderBy, 0, strlen($orderBy) - 1);
+        }
+        $response->recordsTotal = DB::connection(MIRROR)->select("SELECT COUNT(*) AS count FROM nossablastwa_logs")[0]->count;
+        $response->recordsFiltered = DB::connection(MIRROR)->table('nossablastwa_logs')->select(DB::raw("COALESCE(COUNT(*),0)AS count"))->whereRaw($searchString)->get()[0]->count;
+        if ($parameter['length'] != -1) {
+            $response->data = DB::connection(MIRROR)->table('nossablastwa_logs')->select(DB::raw("*,CASE WHEN jsonb_exists(status, 'post success') THEN (status->>'post success')::TIMESTAMP ELSE (status->>'api failed')::TIMESTAMP END AS tgl_kirim,CASE WHEN jsonb_exists(status, 'post success') THEN 'SENT' ELSE 'FAILED' END AS blast_status"))->whereRaw($searchString)->orderByRaw($orderBy)->limit($parameter['length'])->offset(floor($parameter['start'] / $parameter['length']))->get();
+        } else {
+            $response->data = DB::connection(MIRROR)->table('nossablastwa_logs')->select(DB::raw("*,CASE WHEN jsonb_exists(status, 'post success') THEN (status->>'post success')::TIMESTAMP ELSE (status->>'api failed')::TIMESTAMP END AS tgl_kirim,CASE WHEN jsonb_exists(status, 'post success') THEN 'SENT' ELSE 'FAILED' END AS blast_status"))->whereRaw($searchString)->orderByRaw($orderBy)->get();
+        }
+        return $response;
+    }
     private function saveAPIResult(object $result, object $payload, string $phone, string $namaPenerima): bool
     {
         $date = new DateTime('now');
-        return DB::insert("INSERT INTO nossablastwa_logs (session_id,status,data) VALUES (:session_id,jsonb_build_object(:msg,:msgtime),jsonb_build_object('tk_subregion',:tk_subregion,'tk_region',:tk_region,'phone_number',:phone_number,'campaign',:campaign,'level',:lvl,'incident',:incident,'keluhan',:keluhan,'lapul',:lapul,'tk_urgensi',:tk_urgensi,'penerima',:penerima));", ['session_id' => $result->session_id, 'tk_subregion' => $payload->tk_subregion, 'tk_region' => $payload->tk_region, 'phone_number' => $phone, 'campaign' => $payload->campaign, 'lvl' => $payload->level, 'incident' => $payload->incident, 'keluhan' => $payload->keluhan, 'lapul' => $payload->lapul ?? '0', 'tk_urgensi' => $payload->tk_urgensi, 'penerima' => $namaPenerima, 'msg' => $result->msg, 'msgtime' => $date->format(DATETIME_FORMAT)]);
+        return DB::insert("INSERT INTO nossablastwa_logs (session_id,status,data) VALUES (:session_id,jsonb_build_object(:msg,:msgtime),jsonb_build_object('tk_subregion',:tk_subregion,'tk_region',:tk_region,'phone_number',:phone_number,'campaign',:campaign,'level',:lvl,'incident',:incident,'keluhan',:keluhan,'lapul',:lapul,'tk_urgensi',:tk_urgensi,'penerima',:penerima,'reportdate',:reportdate));", ['session_id' => $result->session_id, 'tk_subregion' => $payload->tk_subregion, 'tk_region' => $payload->tk_region, 'phone_number' => $phone, 'campaign' => $payload->campaign, 'lvl' => $payload->level, 'incident' => $payload->incident, 'keluhan' => $payload->keluhan, 'lapul' => $payload->lapul ?? '0', 'tk_urgensi' => $payload->tk_urgensi, 'penerima' => $namaPenerima, 'reportdate' => $payload->reportdate, 'msg' => $result->msg, 'msgtime' => $date->format(DATETIME_FORMAT)]);
     }
     public function APIWACallback(object $payload)
     {

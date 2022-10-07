@@ -5,6 +5,7 @@ namespace Modules\NossaBlastWA\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Services\DictionaryService;
+use Modules\NossaBlastWA\Services\NossaBlastWAService;
 
 define('VALIDATE_NULLABLE_OR_ARRAY', 'nullable|array');
 class NossaBlastWAController extends Controller
@@ -12,6 +13,10 @@ class NossaBlastWAController extends Controller
     public function AdminContact()
     {
         return view('nossablastwa::AdminContact');
+    }
+    public function ViewData()
+    {
+        return view('nossablastwa::viewdata');
     }
     public function listDataContact(DictionaryService $Dictionary)
     {
@@ -35,6 +40,21 @@ class NossaBlastWAController extends Controller
             $tempValue->phone_number = $element->value;
             $response->data[] = $tempValue;
         }
+        return response()->json($response, 200);
+    }
+    public function listDataLog(Request $request, NossaBlastWAService $nossa)
+    {
+        $data = $request->validate([
+            'draw' => 'required|integer',
+            'start' => 'required|integer',
+            'length' => 'required|integer',
+            'search' => 'nullable|array',
+            'order' => 'nullable|array',
+            'columns' => 'required|array',
+        ]);
+
+        $response = $nossa->getLog($data);
+        $response->draw = $data['draw'];
         return response()->json($response, 200);
     }
     public function listDataCampaign(DictionaryService $Dictionary)
