@@ -111,19 +111,19 @@
                                 <div class="form-group row">
                                     <label for="nama" class="col-sm-4 col-form-label">Nama</label>
                                     <div class="col-sm-8">
-                                        <input type="text" name="nama" class="form-control" />
+                                        <input type="text" id="input_nama" name="nama" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="jabatan" class="col-sm-4 col-form-label">Jabatan</label>
                                     <div class="col-sm-8">
-                                        <input type="text" name="jabatan" class="form-control" />
+                                        <input type="text" id="input_jabatan" name="jabatan" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="contact_number" class="col-sm-4 col-form-label">Contact Number</label>
                                     <div class="col-sm-8">
-                                        <input type="text" name="contact_number" class="form-control" />
+                                        <input type="text" id="input_contact_number" name="contact_number" class="form-control" onkeyup="findContact()" />
                                     </div>
                                 </div>
                                 <div class="row" style="float: right;">

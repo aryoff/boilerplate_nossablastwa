@@ -52,7 +52,37 @@ window.deleteContact = function() {
         });
     }
 }
+window.findContact = function() {
+    let phone_number = document.getElementById('input_contact_number').value;
+    if (phone_number.length>8) {
+        let formData = {
+            id: phone_number,
+        };
+        $.ajax({
+            type: "POST",
+            url: base_path+'nossablastwa/findContact',
+            data: formData,
+            dataType: 'json',
+            success: function (data) 
+            {
+                if (typeof data.nama != 'undefined' && typeof data.jabatan != 'undefined') {
+                    document.getElementById('input_nama').value = data.nama;
+                    document.getElementById('input_jabatan').value = data.jabatan;
+                    document.getElementById('input_nama').disabled = true;
+                    document.getElementById('input_jabatan').disabled = true;
+                } else {
+                    document.getElementById('input_nama').disabled = false;
+                    document.getElementById('input_jabatan').disabled = false;
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log('ERR deleteContact');
+                ajaxErrorResponse(xhr, ajaxOptions, thrownError);
+            }
+        });
 
+    }
+}
 if (!!document.getElementById('editCampaignForm')) {
     document.getElementById('editCampaignForm').addEventListener("submit", function(e) {
         e.preventDefault(); // before the code

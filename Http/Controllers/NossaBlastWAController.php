@@ -94,6 +94,13 @@ class NossaBlastWAController extends Controller
         ]);
         return response()->json($Dictionary->deleteByValue('NossaBlastWA', TYPE_PHONE_NUMBER, $data['id']), 200);
     }
+    public function findContact(Request $request, DictionaryService $Dictionary)
+    {
+        $data = $request->validate([
+            'id' => 'required',
+        ]);
+        return response()->json($Dictionary->retrieveExtra('NossaBlastWA', TYPE_PHONE_NUMBER, $data['id']), 200);
+    }
     public function updateCampaign(Request $request, DictionaryService $Dictionary)
     {
         $data = $request->validate([
