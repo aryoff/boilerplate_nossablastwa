@@ -8,7 +8,6 @@ use Modules\IntegratedAPI\Services\IntegratedAPIService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
-define('DATETIME_FORMAT', 'Y-m-d H:i:s');
 class NossaBlastWAService
 {
     public function APINossaTriggered(object $payload)
